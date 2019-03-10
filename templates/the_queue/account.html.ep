@@ -1,0 +1,11 @@
+% layout 'default';
+% $submissions = stash 'submissions';
+
+<h1>Hello <%= session 'username' %></h1>
+
+<div>
+  %= link_to 'Change password' => 'account/changepw', class => 'btn btn-default'
+</div>
+<div>
+  %= link_to 'Delete account' => 'account/delete', class => 'btn btn-default'
+</div>

@@ -1,0 +1,27 @@
+% layout 'default';
+
+% my $id       = stash 'id' // '';
+% my $link     = stash 'link' // '';
+% my $comment  = stash 'comment' // '';
+
+%= form_for submissions => (method => 'POST'), class => 'form-horizontal',  => begin
+  %= hidden_field id => $id
+  <div class="form-group form-group">
+    %= label_for link => 'Link', class => 'control-label col-sm-4'
+    <div class="col-sm-5">
+      %= text_field 'link', id => 'link', class => 'form-control', value => $link
+    </div>
+  </div>
+  <div class="form-group form-group">
+    %= label_for comment => 'Comment', class => 'control-label col-sm-4'
+    <div class="col-sm-5">
+      %= text_field 'comment', id => 'comment', class => 'form-control', value => $comment
+    </div>
+  </div>
+  <div class="form-group form-group">
+    <div class="col-sm-offset-4 col-sm-5">
+      %= submit_button 'Save', class => 'btn btn-default'
+    </div>
+  </div>
+% end
+

@@ -1,0 +1,44 @@
+% layout 'default';
+% $submissions = stash 'submissions';
+
+<h1>Hello <%= session 'username' %></h1>
+% if(@$submissions) {
+    <div class="list-group">
+    % for my $submission (@$submissions) {
+      <div class="list-group-item">
+        <span class="badge alert-info">
+          <a href="<%= url_for 'submissions/edit/'.$submission->id %>" class="btn">
+            <span class="glyphicon glyphicon-edit" />
+          </a>
+          <a href="<%= url_for 'submissions/delete/'.$submission->id %>" class="btn">
+            <span class="glyphicon glyphicon-trash" />
+          </a>
+          <a href="<%= url_for 'submissions/done/'.$submission->id %>" class="btn <%= "active" if $submission->done %>">
+            <span class="glyphicon glyphicon-ok" />
+          </a>
+          <a href="<%= url_for 'submissions/thumbs/'.$submission->id %>" class="btn <%= "active" if $submission->{match} %>">
+            <span class="glyphicon glyphicon-thumbs-up" />
+          </a>
+        </span>
+        <h4 class="list-group-item-heading"><%= $submission->link %></h4>
+        <h5><%= $submission->comment %></h5>
+        <h6>Submitted by: <%= $submission->user->username %></h6>
+        <h6>Interested:</h6>
+        <ul>
+        % for my $i (@{ $submission->interested }) {
+          <li><%= $i->username %></li>
+        % }
+        </ul>
+      </div>
+    % }
+    </div>
+    <div>
+      %= link_to 'Create new one!' => url_for('submissions/new'), class => 'btn btn-default'
+    </div>
+% } else {
+  <h4>No (open) submissions yet :-(</h4>
+  <div>
+    %= link_to 'Create one!' => url_for('submissions/new'), class => 'btn btn-default'
+  </div>
+% }
+<h6><%= link_to 'Show all!' => url_for('submissions')->query(q => 'all'), class => 'btn btn-default' %></h6>

@@ -1,0 +1,33 @@
+% layout 'default';
+
+% my $success = stash 'success' // 0;
+% if ($success != 1) {
+<form method="POST" class="form-horizontal">
+  <div class="form-group form-group">
+    %= label_for username => 'Username', class => 'control-label col-sm-4'
+    <div class="col-sm-5">
+      %= text_field 'username', id => 'username', class => 'form-control'
+    </div>
+  </div>
+  <div class="form-group form-group">
+    %= label_for password1 => 'Password', class => 'control-label col-sm-4'
+    <div class="col-sm-5">
+      %= password_field 'password1', id => 'password1', class => 'form-control'
+    </div>
+  </div>
+  <div class="form-group form-group">
+    %= label_for password2 => 'Repeat', class => 'control-label col-sm-4'
+    <div class="col-sm-5">
+      %= password_field 'password2', id => 'password2', class => 'form-control'
+    </div>
+  </div>
+  <div class="form-group form-group">
+    <div class="col-sm-offset-4 col-sm-5">
+      %= submit_button 'Register', class => 'btn btn-default'
+    </div>
+  </div>
+</form>
+% } else {
+    <h3>Thanks for registering.</h3>
+    %= link_to 'Login' => '/submissions', class => 'btn btn-default'
+% }

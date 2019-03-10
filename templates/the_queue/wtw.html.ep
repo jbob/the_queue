@@ -1,0 +1,60 @@
+% layout 'default';
+% $submissions = stash 'submissions';
+% $people = stash 'people';
+% $attendees = stash 'attendees';
+
+%= form_for wtw => (method => 'POST'), class => 'form-horizontal', autocomplete => 'off', => begin
+  <div class="form-group form-group">
+    %= label_for people => 'People in attendence', class => 'control-label col-sm-4'
+    % for my $p (@$people) {
+    <div class="col-sm-5">
+      % my $checked = "false";
+      % $checked = "true" if grep { $p->username eq $_ } @$attendees;
+      % if (grep {$p->username eq $_} @$attendees) {
+      %= check_box username => $p->username, checked => undef
+      % } else {
+      %= check_box username => $p->username
+      % }
+      %= $p->username
+    </div>
+    % }
+  </div class="form-group form-group">
+  <div class="form-group form-group">
+    <div class="col-sm-offset-4 col-sm-5">
+      %= submit_button 'Update', class => 'btn btn-default'
+    </div>
+  </div>
+
+% end
+
+
+% if(@$submissions) {
+    <div class="list-group">
+    % for my $submission (@$submissions) {
+      <div class="list-group-item">
+        <span class="badge alert-info">
+          <a href="<%= url_for 'submissions/done/'.$submission->id %>" class="btn <%= "active" if $submission->done %>">
+            <span class="glyphicon glyphicon-ok" />
+          </a>
+        </span>
+        <h4 class="list-group-item-heading"><%= $submission->link %></h4>
+        <h5><%= $submission->comment %></h5>
+        <h6>Submitted by: <%= $submission->user->username %></h6>
+        <h6>Interested:</h6>
+        <ul>
+        % for my $i (@{ $submission->interested }) {
+          <li><%= $i->username %></li>
+        % }
+        </ul>
+      </div>
+    % }
+    </div>
+    <div>
+      %= link_to 'Create new one!' => url_for('submissions/new'), class => 'btn btn-default'
+    </div>
+% } else {
+  <h4>No (open) submissions yet :-(</h4>
+  <div>
+    %= link_to 'Create one!' => url_for('submissions/new'), class => 'btn btn-default'
+  </div>
+% }

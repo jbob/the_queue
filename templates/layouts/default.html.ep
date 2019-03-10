@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="//oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+      <script src="//oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    
+    <link href="https://fonts.googleapis.com/css?family=Cormorant:700" rel="stylesheet">
+    <style> 
+        span.navbar-brand { font-family: 'Cormorant', serif; font-size: 38px; }
+    </style>
+
+    <title><%= title || config 'title' =%></title>
+    <%= content_for 'head' =%>
+  </head>
+  <body>
+  <nav class="navbar navbar-default">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#mynavbar">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <span class="navbar-brand"><%= config 'title' %></span>
+      </div>
+      <div class="collapse navbar-collapse" id="mynavbar">
+        <ul class="nav navbar-nav">
+         % if(session 'logged_in') {
+           <li class="<%= 'active' if stash->{action} eq 'submissions_list' %>">
+               %= link_to 'Submissions' => 'submissions'
+           </li>
+           <li class="<%= 'active' if stash->{action} eq 'account' %>">
+               %= link_to 'My Account' => 'account'
+           </li>
+           <li class="<%= 'active' if stash->{action} eq 'wtw' %>">
+               %= link_to 'What to watch' => 'wtw'
+           </li>
+           <li>
+               %= link_to 'Logout' => 'logout'
+           </li>
+         % } else {
+           <li class="<%= 'active' if stash->{action} eq 'login' %>">
+               %= link_to 'Login' => 'submissions'
+           </li>
+           <li class="<%= 'active' if stash->{action} eq 'register' %>">
+               %= link_to 'Register' => 'register'
+           </li>
+         % }
+           <li class="<%= 'active' if stash->{action} eq 'about' %>">
+               %= link_to 'About' => 'about'
+           </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container">
+    % if(my $msg = flash 'msg') {
+    %   my $type = (flash 'type') // 'info';
+        <div class="alert alert-<%= $type %>" role="alert"><%= $msg %></div>
+    % }
+    <%= content =%>
+  </div>
+
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+  <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+  </body>
+</html>
+

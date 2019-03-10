@@ -1,0 +1,27 @@
+% layout 'default';
+
+<form method="POST" class="form-horizontal">
+  <div class="form-group form-group">
+    %= label_for old_password => 'Old password', class => 'control-label col-sm-4'
+    <div class="col-sm-5">
+      %= password_field 'old_password', id => 'old_password', class => 'form-control'
+    </div>
+  </div>
+  <div class="form-group form-group">
+    %= label_for new_password1 => 'New Password', class => 'control-label col-sm-4'
+    <div class="col-sm-5">
+      %= password_field 'new_password1', id => 'new_password1', class => 'form-control'
+    </div>
+  </div>
+  <div class="form-group form-group">
+    %= label_for new_password2 => 'Repeat', class => 'control-label col-sm-4'
+    <div class="col-sm-5">
+      %= password_field 'new_password2', id => 'new_password2', class => 'form-control'
+    </div>
+  </div>
+  <div class="form-group form-group">
+    <div class="col-sm-offset-4 col-sm-5">
+      %= submit_button 'Change password', class => 'btn btn-default'
+    </div>
+  </div>
+</form>
