@@ -37,15 +37,18 @@
             <span class="glyphicon glyphicon-ok" />
           </a>
         </span>
-        <h4 class="list-group-item-heading"><%= $submission->link %></h4>
-        <h5><%= $submission->comment %></h5>
-        <h6>Submitted by: <%= $submission->user->username %></h6>
+        <h4 class="list-group-item-heading"><%= link_to $submission->link => $submission->link %></h4>
+        %= tag 'h5' => $submission->comment
+        %= tag 'h5' => $submission->ogp->title if $submission->ogp->title; 
+        %= image $submission->ogp->image, height => "400px" if $submission->ogp->image;
+        %= tag 'h6' => 'Submitted by: ' . $submission->user->username;
         <h6>Interested:</h6>
         <ul>
         % for my $i (@{ $submission->interested }) {
           <li><%= $i->username %></li>
         % }
         </ul>
+        <h5><%= scalar @{$submission->{interested_attendees}} %> out of <%= scalar @$attendees %> people here want to see this</h5>
       </div>
     % }
     </div>
@@ -53,7 +56,7 @@
       %= link_to 'Create new one!' => url_for('submissions/new'), class => 'btn btn-default'
     </div>
 % } else {
-  <h4>No (open) submissions yet :-(</h4>
+  <h4>No (suitable and open) submissions yet :-(</h4>
   <div>
     %= link_to 'Create one!' => url_for('submissions/new'), class => 'btn btn-default'
   </div>

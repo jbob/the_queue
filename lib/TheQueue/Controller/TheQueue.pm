@@ -5,6 +5,12 @@ use Digest::SHA qw(sha512_hex);
 use URI::Escape;
 use Mango::BSON 'bson_oid';
 use Encode qw(decode encode);
+use Array::Utils qw(:all);
+use Mojo::UserAgent;
+
+    my $ua = Mojo::UserAgent->new;
+    $ua->proxy->detect;
+    $ua->max_redirects(3)->connect_timeout(3)->request_timeout(3);
 
 sub login {
     my $self = shift;
@@ -28,7 +34,8 @@ sub login {
 sub logout {
     my $self = shift;
     $self->session(logged_in => 0);
-    $self->session(username => '');
+    $self->session(username => undef);
+    $self->session(attendees => undef);
     return $self->redirect_to('index');
 }
 
@@ -121,9 +128,9 @@ sub deleteacc {
         $self->users->search({ username => $username })->single(sub {
             my ($users, $err, $user) = @_;
             $self->reply->exception($err) if $err;
-            my $logins = $user->logins;
-            for my $login (@$logins) {
-                $login->remove;
+            my $submissions = $user->submissions;
+            for my $submission (@$submissions) {
+                $submission->remove;
             }
             $user->remove;
             $self->redirect_to('logout');
@@ -172,11 +179,14 @@ sub wtw {
         my ($submissions, $err, $submission) = @_;
         my @relevant_submissions = grep {
             my $sub = $_;
+            my @interested_users = map { $_->username } @{ $sub->interested };
+            $sub->{interested_attendees} = [intersect(@$attendees, @interested_users)];
             grep {
                 my $att = $_;
                 $sub->user->username eq $att;
             } @$attendees;
         } @$submission;
+        @relevant_submissions = sort { scalar @{$b->{interested_attendees}} <=> scalar @{$a->{interested_attendees}} } @relevant_submissions;
         $self->users->all(sub { 
             # Do this just to get a list of all usernames?
             my ($users, $err, $user) = @_;
@@ -206,23 +216,45 @@ sub upsert {
                 $submission->link($link);
                 $submission->comment($comment);
                 $submission->save;
-                $self->redirect_to($self->req->headers->referrer);
+                $self->redirect_to('submissions');
             });
         });
     } else {
         # Create new record
-        my $newsubmission = $self->submissions->create({ link    => $link,
-                                             done    => 0,
-                                                         comment => $comment });
+        my $newsubmission = $self->submissions->create({
+            link    => $link,
+            done    => 0,
+            comment => $comment
+        });
 
-        $self->users->search({ username => $username })->single(sub {
-            my ($users, $err, $user) = @_;
-            $self->reply->exception($err) if $err;
-            $user->add_submissions($newsubmission);
-        $newsubmission->push_interested($user);
-        $user->save;
-        $newsubmission->save;
-            $self->redirect_to($self->req->headers->referrer);
+        $ua->get($link => sub {
+            my ($ua, $tx) = @_;
+            my $ogtitle = $tx->result->dom->at('meta[property="og:title"]');
+            $ogtitle = $ogtitle->attr('content') if $ogtitle;
+            my $ogdescription = $tx->result->dom->at('meta[property="og:description"]');
+            $ogdescription = $ogdescription->attr('content') if $ogdescription;
+            my $ogimage = $tx->result->dom->at('meta[property="og:image"]');
+            $ogimage = $ogimage->attr('content') if $ogimage;
+            unless ($ogimage) {
+                $ogimage = $tx->result->dom->at('img');
+                $ogimage = $ogimage->attr('src') if $ogimage;
+                $ogimage = $tx->req->url->new($ogimage)->to_abs($tx->req->url) if $ogimage;
+            }
+            my $newogp = $self->ogps->create({
+                title       => $ogtitle,
+                description => $ogdescription,
+                image       => $ogimage
+            });
+            $newsubmission->ogp($newogp);
+            $self->users->search({ username => $username })->single(sub {
+                my ($users, $err, $user) = @_;
+                $self->reply->exception($err) if $err;
+                $user->add_submissions($newsubmission);
+                $newsubmission->push_interested($user);
+                $user->save;
+                $newsubmission->save;
+                $self->redirect_to('submissions');
+            });
         });
     }
     $self->render_later;
@@ -278,10 +310,9 @@ sub thumbs {
         $self->users->search({ username => $username })->single(sub {
             my ($users, $err, $user) = @_;
             $self->reply->exception($err) if $err;
-
-        my $found = grep { $_->id eq $user->id }  @{ $submission->interested };
-        $submission->remove_interested($user) if $found;
-        $submission->push_interested($user) if not $found;
+            my $found = grep { $_->id eq $user->id }  @{ $submission->interested };
+            $submission->remove_interested($user) if $found;
+            $submission->push_interested($user) if not $found;
         });
         $submission->save;
         $self->redirect_to($self->req->headers->referrer);
@@ -293,19 +324,14 @@ sub delete {
     my $self = shift;
     my $stash = $self->stash;
     my $id = $self->req->param('id') || $stash->{id};
-    my $username = $self->session('username');
 
-    $self->users->search({ username => $username })->single(sub {
-        my ($users, $err, $user) = @_;
+    $self->submissions->search({_id => bson_oid($id)})->single(sub {
+        my ($submissions, $err, $submission) = @_;
         $self->reply->exception($err) if $err;
-        $self->submissions->search({'user.$id' => bson_oid($user->id), _id => bson_oid($id)})->single(sub {
-            my ($submissions, $err, $submission) = @_;
-            $self->reply->exception($err) if $err;
-            $submissions->remove;
-            $self->redirect_to($self->req->headers->referrer);
-        });
+        $submission->ogp->remove(sub {}) if $submission->ogp;
+        $submissions->remove(sub {});
+        $self->redirect_to($self->req->headers->referrer);
     });
-
     $self->render_later;
 }
 

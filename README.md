@@ -19,13 +19,13 @@ execute either:
     $ morbo script/the_queue (for development), or
     $ hypnotoad script/the_queue (for production)
 
-The app will then listen on either 127.0.0.1:3000 (development) or 0.0.0.0:8012
+The app will then listen on either 127.0.0.1:3000 (development) or 0.0.0.0:8014
 (production).
 
 To access your app via a reverse proxy, create a minimal VHost like this:
 
     <VirtualHost *:443>
         ServerName thequeue.markusko.ch
-        ProxyPass / http://127.0.0.1:8012/
+        ProxyPass / http://127.0.0.1:8014/
     </VirtualHost>
 # the_queue

@@ -14,6 +14,7 @@ sub register {
 
     $app->helper(users => sub { $_[0]->app->model->collection('user') } );
     $app->helper(submissions => sub { $_[0]->app->model->collection('submission') } );
+    $app->helper(ogps => sub { $_[0]->app->model->collection('ogp') } );
 
     $app->helper(auth => sub {
         my $self = shift;
