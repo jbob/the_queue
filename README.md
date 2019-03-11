@@ -1,13 +1,12 @@
 # TheQueue
 
-Web-based password storage written with Perl/Mojolicious/MongoDB/Manel. See it
-in action at [https://thequeue.markusko.ch](https://thequeue.markusko.ch)
+Web-based queue thingy written with Perl/Mojolicious/MongoDB/Mandel. See it
+in action at [https://queue.markusko.ch](https://queue.markusko.ch)
 
 ## Dependencies
 
 * Perl
 * Mojolicious
-* Mango module (Non-blocking MongoDB driver for Perl)
 * Mandel (ORM module for Mango/MongoDB)
 * MongoDB
 
@@ -28,4 +27,3 @@ To access your app via a reverse proxy, create a minimal VHost like this:
         ServerName thequeue.markusko.ch
         ProxyPass / http://127.0.0.1:8014/
     </VirtualHost>
-# the_queue
