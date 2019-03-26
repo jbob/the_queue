@@ -33,22 +33,37 @@
     % for my $submission (@$submissions) {
       <div class="list-group-item">
         <span class="badge alert-info">
+          <a href="<%= url_for 'submissions/edit/'.$submission->id %>" class="btn">
+            <span class="glyphicon glyphicon-edit" />
+          </a>
+          <a href="<%= url_for 'submissions/delete/'.$submission->id %>" class="btn">
+            <span class="glyphicon glyphicon-trash" />
+          </a>
           <a href="<%= url_for 'submissions/done/'.$submission->id %>" class="btn <%= "active" if $submission->done %>">
-            <span class="glyphicon glyphicon-ok" />
+            <span class="glyphicon glyphicon-eye-open" />
+          </a>
+          <a href="<%= url_for 'submissions/thumbs/'.$submission->id %>" class="btn <%= "active" if $submission->{match} %>">
+            <span class="glyphicon glyphicon-thumbs-up" />
           </a>
         </span>
-        <h4 class="list-group-item-heading"><%= link_to $submission->link => $submission->link %></h4>
-        %= tag 'h5' => $submission->comment
-        %= tag 'h5' => $submission->ogp->title if $submission->ogp->title; 
-        %= image $submission->ogp->image, height => "400px" if $submission->ogp->image;
-        %= tag 'h6' => 'Submitted by: ' . $submission->user->username;
-        <h6>Interested:</h6>
-        <ul>
-        % for my $i (@{ $submission->interested }) {
-          <li><%= $i->username %></li>
-        % }
-        </ul>
-        <h5><%= scalar @{$submission->{interested_attendees}} %> out of <%= scalar @$attendees %> people here want to see this</h5>
+        <div class="row">
+          <div class="col-sm-8">
+            %= tag 'h4' => (class => 'list-group-item-heading') => link_to $submission->link => $submission->link
+            %= tag 'h5' => $submission->comment
+            %= tag 'h5' => $submission->ogp->title if $submission->ogp->title; 
+            %= image $submission->ogp->image => (class => 'img-responsive') if $submission->ogp->image;
+          </div> <!-- col -->
+          <div class="col-sm-4">
+            %= tag 'h6' => 'Submitted by: ' . $submission->user->username;
+            <h6>Interested:</h6>
+            <ul>
+            % for my $i (@{ $submission->interested }) {
+              <li><%= $i->username %></li>
+            % }
+            </ul>
+            <h5><%= scalar @{$submission->{interested_attendees}} %> out of <%= scalar @$attendees %> people here want to see this</h5>
+          </div> <!-- col -->
+        </div> <!-- row -->
       </div>
     % }
     </div>

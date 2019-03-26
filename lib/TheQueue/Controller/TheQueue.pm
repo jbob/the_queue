@@ -175,23 +175,31 @@ sub wtw {
     $self->session(attendees => $attendees) if @$attendees;
     $attendees = $self->session('attendees');
     $self->session(attendees => $attendees) if $attendees;
-    $self->submissions->search({done => 0})->all(sub {
-        my ($submissions, $err, $submission) = @_;
-        my @relevant_submissions = grep {
-            my $sub = $_;
-            my @interested_users = map { $_->username } @{ $sub->interested };
-            $sub->{interested_attendees} = [intersect(@$attendees, @interested_users)];
-            grep {
-                my $att = $_;
-                $sub->user->username eq $att;
-            } @$attendees;
-        } @$submission;
-        @relevant_submissions = sort { scalar @{$b->{interested_attendees}} <=> scalar @{$a->{interested_attendees}} } @relevant_submissions;
-        $self->users->all(sub { 
-            # Do this just to get a list of all usernames?
-            my ($users, $err, $user) = @_;
-            $self->reply->exception($err) if $err;
-            $self->render(people => $user, attendees => $attendees, submissions => \@relevant_submissions);
+    $self->users->search({ username => $username })->single(sub {
+        my ($users, $err, $user) = @_;
+        $self->reply->exception($err) if $err;
+        $self->submissions->search({done => 0})->all(sub {
+            my ($submissions, $err, $submission) = @_;
+            my @relevant_submissions = grep {
+                my $sub = $_;
+                my @interested_users = map { $_->username } @{ $sub->interested };
+                $sub->{interested_attendees} = [intersect(@$attendees, @interested_users)];
+                grep {
+                    my $att = $_;
+                    $sub->user->username eq $att;
+                } @$attendees;
+            } @$submission;
+            @relevant_submissions = sort { scalar @{$b->{interested_attendees}} <=> scalar @{$a->{interested_attendees}} } @relevant_submissions;
+            for my $sub (@relevant_submissions) {
+                my $found = grep { $_->id eq $user->id }  @{ $sub->interested };
+                $sub->{match} = 1 if $found;
+            }
+            $self->users->all(sub { 
+                # Do this just to get a list of all usernames?
+                my ($users, $err, $user) = @_;
+                $self->reply->exception($err) if $err;
+                $self->render(people => $user, attendees => $attendees, submissions => \@relevant_submissions);
+            });
         });
     });
     $self->render_later;

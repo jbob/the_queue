@@ -14,7 +14,7 @@
             <span class="glyphicon glyphicon-trash" />
           </a>
           <a href="<%= url_for 'submissions/done/'.$submission->id %>" class="btn <%= "active" if $submission->done %>">
-            <span class="glyphicon glyphicon-ok" />
+            <span class="glyphicon glyphicon-eye-open" />
           </a>
           <a href="<%= url_for 'submissions/thumbs/'.$submission->id %>" class="btn <%= "active" if $submission->{match} %>">
             <span class="glyphicon glyphicon-thumbs-up" />
