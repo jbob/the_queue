@@ -3,4 +3,6 @@ requires 'IO::Socket::SSL'; # requires zlib (zlib1g-dev on Ubuntu/Debian, zlib o
 requires 'Mandel';
 requires 'Types::Standard';
 requires 'Digest::SHA';
+requires 'Crypt::Eksblowfish::Bcrypt';
+requires 'Data::Entropy::Algorithms';
 requires 'Array::Utils';

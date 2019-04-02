@@ -1,16 +1,13 @@
 package TheQueue::Controller::TheQueue;
 use Mojo::Base 'Mojolicious::Controller';
 
-use Digest::SHA qw(sha512_hex);
-use URI::Escape;
 use Mango::BSON 'bson_oid';
-use Encode qw(decode encode);
 use Array::Utils qw(:all);
 use Mojo::UserAgent;
 
-    my $ua = Mojo::UserAgent->new;
-    $ua->proxy->detect;
-    $ua->max_redirects(3)->connect_timeout(3)->request_timeout(3);
+my $ua = Mojo::UserAgent->new;
+$ua->proxy->detect;
+$ua->max_redirects(3)->connect_timeout(3)->request_timeout(3);
 
 sub login {
     my $self = shift;
@@ -21,7 +18,7 @@ sub login {
     my $password = $self->param('password') // '';
     if ($username and $password)  {
         $self->session(username => $username);
-        $self->session(password => sha512_hex sha512_hex $password);
+        $self->session(password => $password);
         return $self->redirect_to($self->session('target') // '/');
     } else {
         if ($self->req->method eq 'POST') {
@@ -64,16 +61,19 @@ sub register {
         if ($user) {
             $self->flash(msg => 'Username already taken', type => 'danger');
             return $self->redirect_to('register');
-        } else {
-            my $password = sha512_hex sha512_hex $password1;
-            $self->users->create({ username   => $username,
-                                   password   => $password
-                                 })->save(sub {
-                                       my ($users, $err, $user) = @_;
-                                       $self->reply->exception($err) if $err;
-                                       $self->render(success => 1);
-                                   });
         }
+        my $info = $self->gen_pwhash({
+            password => $password1
+        });
+        $self->users->create({ username   => $username,
+                               password   => $info->{hash},
+                               salt       => $info->{salt},
+                               cost       => $info->{cost}
+                             })->save(sub {
+                                   my ($users, $err, $user) = @_;
+                                   $self->reply->exception($err) if $err;
+                                   $self->render(success => 1);
+                             });
     });
     $self->render_later;
 }
@@ -97,20 +97,29 @@ sub changepw {
     }
 
     my $username = $self->session('username');
-    $old_password = sha512_hex sha512_hex $old_password;
 
-    $self->users->search({ username => $username, password => $old_password })->single(sub {
+    $self->users->search({ username => $username })->single(sub {
         my ($users, $err, $user) = @_;
         $self->reply->exception($err) if $err;
         if ($user) {
-            $user->password(sha512_hex sha512_hex $new_password1);
-            $user->save;
-            return $self->redirect_to('logout');
-        } else {
-            $self->flash(msg => 'Old password is incorrect', type => 'danger');
-            return $self->redirect_to('changepw');
+            my $old_hash = $self->gen_pwhash({
+                password => $old_password,
+                salt     => $user->salt,
+                cost     => $user->cost
+            })->{hash};
+            if ($old_hash eq $user->password) {
+                my $new_info = $self->gen_pwhash({
+                    password => $new_password1,
+                });
+                $user->password($new_info->{hash});
+                $user->salt($new_info->{salt});
+                $user->cost($new_info->{cost});
+                $user->save;
+                return $self->redirect_to('logout');
+            }
         }
-
+        $self->flash(msg => 'Old password is incorrect', type => 'danger');
+        return $self->redirect_to('changepw');
     });
     $self->render_later;
 }

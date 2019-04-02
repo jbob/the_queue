@@ -1,7 +1,7 @@
 % layout 'default';
 
 % my $success = stash 'success' // 0;
-% if ($success != 1) {
+% if (not $success or $success != 1) {
 <form method="POST" class="form-horizontal">
   <div class="form-group form-group">
     %= label_for username => 'Username', class => 'control-label col-sm-4'
