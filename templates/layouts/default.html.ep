@@ -51,7 +51,7 @@
            </li>
          % } else {
            <li class="<%= 'active' if stash->{action} eq 'login' %>">
-               %= link_to 'Login' => 'submissions'
+               %= link_to 'Login' => 'wtw'
            </li>
            <li class="<%= 'active' if stash->{action} eq 'register' %>">
                %= link_to 'Register' => 'register'

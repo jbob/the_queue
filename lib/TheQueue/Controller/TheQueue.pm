@@ -233,7 +233,7 @@ sub upsert {
                 $submission->link($link);
                 $submission->comment($comment);
                 $submission->save;
-                $self->redirect_to('submissions');
+                $self->redirect_to('wtw');
             });
         });
     } else {
@@ -270,7 +270,7 @@ sub upsert {
                 $newsubmission->push_interested($user);
                 $user->save;
                 $newsubmission->save;
-                $self->redirect_to('submissions');
+                $self->redirect_to('wtw');
             });
         });
     }

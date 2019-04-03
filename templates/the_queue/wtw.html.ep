@@ -3,29 +3,39 @@
 % $people = stash 'people';
 % $attendees = stash 'attendees';
 
+<div class="row">
+<div class="col-sm-offset-3 col-sm-6">
 %= form_for wtw => (method => 'POST'), class => 'form-horizontal', autocomplete => 'off', => begin
-  <div class="form-group form-group">
-    %= label_for people => 'People in attendence', class => 'control-label col-sm-4'
+  <fieldset>
+  <div class="form-group">
+    %= label_for checkboxes => 'People in attendence', class => 'control-label'
     % for my $p (@$people) {
-    <div class="col-sm-5">
-      % my $checked = "false";
-      % $checked = "true" if grep { $p->username eq $_ } @$attendees;
-      % if (grep {$p->username eq $_} @$attendees) {
-      %= check_box username => $p->username, checked => undef
-      % } else {
-      %= check_box username => $p->username
-      % }
-      %= $p->username
+    <div>
+      <div class="checkbox">
+      <label for="<%= $p->username %>">
+        % my $checked = "false";
+        % $checked = "true" if grep { $p->username eq $_ } @$attendees;
+        % if (grep {$p->username eq $_} @$attendees) {
+        %= check_box username => $p->username, checked => undef, id => $p->username
+        % } else {
+        %= check_box username => $p->username, id => $p->username
+        % }
+        %= $p->username
+      </label>
+      </div>
     </div>
     % }
-  </div class="form-group form-group">
-  <div class="form-group form-group">
-    <div class="col-sm-offset-4 col-sm-5">
+    <div class="col-sm-offset-3 col-sm-6">
       %= submit_button 'Update', class => 'btn btn-default'
     </div>
   </div>
-
+  </fieldset>
 % end
+</div>
+<div class="col-sm-3">
+  %= link_to 'Create new one!' => url_for('submissions/new'), class => 'btn btn-default'
+</div>
+</div>
 
 
 % if(@$submissions) {
@@ -64,11 +74,8 @@
             <h5><%= scalar @{$submission->{interested_attendees}} %> out of <%= scalar @$attendees %> people here want to see this</h5>
           </div> <!-- col -->
         </div> <!-- row -->
-      </div>
+      </div> <!-- list-group-item -->
     % }
-    </div>
-    <div>
-      %= link_to 'Create new one!' => url_for('submissions/new'), class => 'btn btn-default'
     </div>
 % } else {
   <h4>No (suitable and open) submissions yet :-(</h4>

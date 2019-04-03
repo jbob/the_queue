@@ -1,7 +1,10 @@
 % layout 'default';
 % $submissions = stash 'submissions';
 
-<h1>Hello <%= session 'username' %></h1>
+<h1>Hello <%= session 'username' %>
+    %= link_to 'Create new one!' => url_for('submissions/new'), class => 'btn btn-default'
+    %= link_to 'Show all!' => url_for('submissions')->query(q => 'all'), class => 'btn btn-default'
+</h1>
 % if(@$submissions) {
     <div class="list-group">
     % for my $submission (@$submissions) {
@@ -32,13 +35,6 @@
       </div>
     % }
     </div>
-    <div>
-      %= link_to 'Create new one!' => url_for('submissions/new'), class => 'btn btn-default'
-    </div>
 % } else {
   <h4>No (open) submissions yet :-(</h4>
-  <div>
-    %= link_to 'Create one!' => url_for('submissions/new'), class => 'btn btn-default'
-  </div>
 % }
-<h6><%= link_to 'Show all!' => url_for('submissions')->query(q => 'all'), class => 'btn btn-default' %></h6>
