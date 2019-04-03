@@ -79,7 +79,4 @@
     </div>
 % } else {
   <h4>No (suitable and open) submissions yet :-(</h4>
-  <div>
-    %= link_to 'Create one!' => url_for('submissions/new'), class => 'btn btn-default'
-  </div>
 % }
