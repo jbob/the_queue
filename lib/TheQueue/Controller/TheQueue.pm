@@ -345,26 +345,23 @@ sub delete {
 }
 
 sub search {
-    # Should really be non-blocking, but whatever
-    # Or maybe use a text index in MongoDB?
-    # At least some kind of error checking maybe?
     my $self = shift;
     my $stash = $self->stash;
     my $search = $self->req->param('search') || $stash->{search} || '';
 
-    my $r1 = $self->submissions->search({ comment => qr/$search/i })->all;
-    my $r2 = $self->submissions->search({ link => qr/$search/i })->all;
-    push @$r1, @$r2;
-
-    my $r3 = $self->ogps->search({ title => qr/$search/i})->all;
-    push @$r1, map { $_->submission } @$r3;
-
-    my $r4 = $self->ogps->search({ description => qr/$search/i})->all;
-    push @$r1, map { $_->submission } @$r4;
-
-    my %seen;
-    my @result = grep { !$seen{$_->id}++ } @$r1;
-    $self->render(submissions => \@result);
+    $self->submissions->search({'$or' => [{comment => qr/$search/i}, {link => qr/$search/i}]})->all(sub {
+        my ($submissions, $err, $hits1) = @_;
+        $self->reply->exception($err) if $err;
+        $self->ogps->search({ '$or' => [{title => qr/$search/i}, {description => qr/$search/i}] })->all(sub {
+            my ($ogps, $err, $hits2) = @_;
+            $self->reply->exception($err) if $err;
+            push @$hits1, map { $_->submission } @$hits2;
+            my %seen;
+            my @result = grep { !$seen{$_->id}++ } @$hits1;
+            $self->render(submissions => \@result);
+        });
+    });
+    $self->render_later;
 }
 
 1;
