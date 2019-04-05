@@ -61,7 +61,7 @@
              href="<%= url_for 'about' %>">About</a>
       </div>
       <div class="navbar-end">
-        <form method="POST" action="<%= url_for 'search' %>">
+        <form method="GET" action="<%= url_for 'search' %>">
           <div class="navbar-item field">
             <p class="control has-icons-right">
                 <input class="input" name="search" placeholder="Search...">

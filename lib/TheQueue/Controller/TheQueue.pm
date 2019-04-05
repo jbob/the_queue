@@ -348,17 +348,26 @@ sub search {
     my $self = shift;
     my $stash = $self->stash;
     my $search = $self->req->param('search') || $stash->{search} || '';
+    my $username = $self->session('username');
 
-    $self->submissions->search({'$or' => [{comment => qr/$search/i}, {link => qr/$search/i}]})->all(sub {
-        my ($submissions, $err, $hits1) = @_;
+    $self->users->search({ username => $username })->single(sub {
+        my ($users, $err, $user) = @_;
         $self->reply->exception($err) if $err;
-        $self->ogps->search({ '$or' => [{title => qr/$search/i}, {description => qr/$search/i}] })->all(sub {
-            my ($ogps, $err, $hits2) = @_;
+        $self->submissions->search({'$or' => [{comment => qr/$search/i}, {link => qr/$search/i}]})->all(sub {
+            my ($submissions, $err, $hits1) = @_;
             $self->reply->exception($err) if $err;
-            push @$hits1, map { $_->submission } @$hits2;
-            my %seen;
-            my @result = grep { !$seen{$_->id}++ } @$hits1;
-            $self->render(submissions => \@result);
+            $self->ogps->search({ '$or' => [{title => qr/$search/i}, {description => qr/$search/i}] })->all(sub {
+                my ($ogps, $err, $hits2) = @_;
+                $self->reply->exception($err) if $err;
+                push @$hits1, map { $_->submission } @$hits2;
+                my %seen;
+                my @result = grep { !$seen{$_->id}++ } @$hits1;
+                for my $sub (@result) {
+                    my $found = grep { $_->id eq $user->id }  @{ $sub->interested };
+                    $sub->{match} = 1 if $found;
+                }
+                $self->render(submissions => \@result);
+            });
         });
     });
     $self->render_later;
