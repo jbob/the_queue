@@ -36,9 +36,11 @@
           <header class="card-header">
             %= tag 'p' => (class => 'card-header-title') => link_to $submission->link => $submission->link
           </header>
-          <div class="card-content columns">
+          <div class="card-content columns is-desktop">
             <div class="column">
+            <figure class="image">
               %= image $submission->ogp->image => (style => 'max-width:600px') if $submission->ogp->image;
+            </figure>
             </div>
             <div class="column content">
               %= tag 'h1' => $submission->ogp->title if $submission->ogp->title; 
