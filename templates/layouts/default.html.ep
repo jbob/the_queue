@@ -5,76 +5,74 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bulma/0.7.4/css/bulma.min.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
 
-    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-    <!--[if lt IE 9]>
-      <script src="//oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-      <script src="//oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-    <![endif]-->
-    
     <link href="https://fonts.googleapis.com/css?family=Cormorant:700" rel="stylesheet">
     <style> 
-        span.navbar-brand { font-family: 'Cormorant', serif; font-size: 38px; }
+        .fancy-font{ font-family: 'Cormorant', serif; font-size: 24px; }
     </style>
-
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+          const $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
+          if ($navbarBurgers.length > 0) {
+            $navbarBurgers.forEach( el => {
+              el.addEventListener('click', () => {
+                const target = el.dataset.target;
+                const $target = document.getElementById(target);
+                el.classList.toggle('is-active');
+                $target.classList.toggle('is-active');
+              });
+            });
+          }
+        });
+    </script>
     <title><%= title || config 'title' =%></title>
     <%= content_for 'head' =%>
   </head>
   <body>
-  <nav class="navbar navbar-default">
-    <div class="container-fluid">
-      <div class="navbar-header">
-        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#mynavbar">
-          <span class="sr-only">Toggle navigation</span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-        </button>
-        <span class="navbar-brand"><%= config 'title' %></span>
-      </div>
-      <div class="collapse navbar-collapse" id="mynavbar">
-        <ul class="nav navbar-nav">
-         % if(session 'logged_in') {
-           <li class="<%= 'active' if stash->{action} eq 'submissions_list' %>">
-               %= link_to 'Submissions' => 'submissions'
-           </li>
-           <li class="<%= 'active' if stash->{action} eq 'account' %>">
-               %= link_to 'My Account' => 'account'
-           </li>
-           <li class="<%= 'active' if stash->{action} eq 'wtw' %>">
-               %= link_to 'What to watch' => 'wtw'
-           </li>
-           <li>
-               %= link_to 'Logout' => 'logout'
-           </li>
-         % } else {
-           <li class="<%= 'active' if stash->{action} eq 'login' %>">
-               %= link_to 'Login' => 'wtw'
-           </li>
-           <li class="<%= 'active' if stash->{action} eq 'register' %>">
-               %= link_to 'Register' => 'register'
-           </li>
-         % }
-           <li class="<%= 'active' if stash->{action} eq 'about' %>">
-               %= link_to 'About' => 'about'
-           </li>
-        </ul>
+  <nav class="navbar is-light">
+    <div class="navbar-brand">
+      <span class="navbar-item fancy-font"><%= config 'title' %></span>
+      <a class="navbar-burger" data-target="mynavbar">
+        <span></span>
+        <span></span>
+        <span></span>
+      </a>
+    </div>
+    <div class="navbar-menu" id="mynavbar">
+      <div class="navbar-start">
+       % if(session 'logged_in') {
+         <a class="navbar-item <%= 'is-active' if stash->{action} eq 'submissions_list' %>"
+             href="<%= url_for 'submissions' %>">Submissions</a>
+         <a class="navbar-item <%= 'is-active' if stash->{action} eq 'account' %>"
+             href="<%= url_for 'account' %>">My Account</a>
+         <a class="navbar-item <%= 'is-active' if stash->{action} eq 'wtw' %>"
+             href="<%= url_for 'wtw' %>">What to watch</a>
+         <a class="navbar-item"
+             href="<%= url_for 'logout' %>">Logout</a>
+       % } else {
+         <a class="navbar-item <%= 'is-active' if stash->{action} eq 'login' %>"
+             href="<%= url_for 'wtw' %>">Login</a>
+         <a class="navbar-item <%= 'is-active' if stash->{action} eq 'register' %>"
+             href="<%= url_for 'register' %>">Register</a>
+       % }
+         <a class="navbar-item <%= 'is-active' if stash->{action} eq 'about' %>"
+             href="<%= url_for 'about' %>">About</a>
       </div>
     </div>
   </nav>
 
-  <div class="container">
-    % if(my $msg = flash 'msg') {
-    %   my $type = (flash 'type') // 'info';
-        <div class="alert alert-<%= $type %>" role="alert"><%= $msg %></div>
-    % }
-    <%= content =%>
-  </div>
+  <section class="section">
+    <div class="container">
+      % if(my $msg = flash 'msg') {
+      %   my $type = (flash 'type') // 'info';
+          <div class="alert alert-<%= $type %>" role="alert"><%= $msg %></div>
+      % }
+      <%= content =%>
+    </div>
+  </section>
 
-  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-  <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
   </body>
 </html>
 
