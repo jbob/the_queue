@@ -13,7 +13,7 @@
           </header>
           <div class="card-content columns">
             <div class="column">
-              %= image $submission->ogp->image => (style => 'max-width:600px') if $submission->ogp->image;
+              %= image $submission->ogp->image if $submission->ogp->image;
             </div>
             <div class="column content">
               %= tag 'h1' => $submission->ogp->title if $submission->ogp->title; 
