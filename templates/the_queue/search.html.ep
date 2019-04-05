@@ -17,7 +17,6 @@
             </div>
             <div class="column content">
               %= tag 'h1' => $submission->ogp->title if $submission->ogp->title; 
-              %= tag 'p'  => $submission->ogp->description if $submission->ogp->description;
               %= tag 'h4' => $submission->comment
               %= tag 'h5' => 'Submitted by: ' . $submission->user->username;
               <span>Interested:</span>
@@ -28,20 +27,6 @@
               </ul>
             </div>
           </div>
-          <footer class="card-footer">
-            <a href="<%= url_for 'submissions/edit/'.$submission->id %>" class="card-footer-item">
-              <span class="icon"><i class="fas fa-edit"></i></span>
-            </a>
-            <a href="<%= url_for 'submissions/delete/'.$submission->id %>" class="card-footer-item">
-              <span class="icon"><i class="fas fa-trash"></i></span>
-            </a>
-            <a href="<%= url_for 'submissions/done/'.$submission->id %>" class="card-footer-item">
-              <span class="icon <%= 'has-text-success' if $submission->done %>"><i class="fas fa-eye"></i></span>
-            </a>
-            <a href="<%= url_for 'submissions/thumbs/'.$submission->id %>" class="card-footer-item">
-              <span class="icon <%= 'has-text-success' if $submission->{match} %>"><i class="fas fa-thumbs-up"></i></span>
-            </a>
-          </footer>
         </div> <!-- card -->
     % }
 % } else {

@@ -36,6 +36,7 @@ sub startup {
     $l->any('/wtw')->to('TheQueue#wtw');
     $l->any('/account/changepw')->to('TheQueue#changepw');
     $l->any('/account/delete')->to('TheQueue#deleteacc');
+    $l->post('/search')->to('TheQueue#search');
 }
 
 1;

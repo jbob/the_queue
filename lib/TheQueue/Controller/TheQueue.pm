@@ -224,17 +224,13 @@ sub upsert {
 
     if ($id) {
         # Update existing record
-        $self->users->search({ username => $username })->single(sub {
-            my ($users, $err, $user) = @_;
+        $self->submissions->search({_id => bson_oid($id)})->single(sub {
+            my ($submissions, $err, $submission) = @_;
             $self->reply->exception($err) if $err;
-            $self->submissions->search({'user.$id' => bson_oid($user->id), _id => bson_oid($id)})->single(sub {
-                my ($submissions, $err, $submission) = @_;
-                $self->reply->exception($err) if $err;
-                $submission->link($link);
-                $submission->comment($comment);
-                $submission->save;
-                $self->redirect_to('wtw');
-            });
+            $submission->link($link);
+            $submission->comment($comment);
+            $submission->save;
+            $self->redirect_to('wtw');
         });
     } else {
         # Create new record
@@ -282,17 +278,13 @@ sub edit {
     my $stash = $self->stash;
     my $username = $self->session('username');
     my $id = $self->req->param('id') || $stash->{id};
-    $self->users->search({ username => $username })->single(sub {
-        my ($users, $err, $user) = @_;
+    $self->submissions->search({_id => bson_oid($id)})->single(sub {
+        my ($submissions, $err, $submission) = @_;
         $self->reply->exception($err) if $err;
-        $self->submissions->search({'user.$id' => bson_oid($user->id), _id => bson_oid($id)})->single(sub {
-            my ($submissions, $err, $submission) = @_;
-            $self->reply->exception($err) if $err;
-            $self->stash(id      => $id);
-            $self->stash(link    => $submission->link);
-            $self->stash(comment => $submission->comment);
-            $self->render('the_queue/form');
-        });
+        $self->stash(id      => $id);
+        $self->stash(link    => $submission->link);
+        $self->stash(comment => $submission->comment);
+        $self->render('the_queue/form');
     });
     $self->render_later;
 }
@@ -350,6 +342,29 @@ sub delete {
         $self->redirect_to($self->req->headers->referrer);
     });
     $self->render_later;
+}
+
+sub search {
+    # Should really be non-blocking, but whatever
+    # Or maybe use a text index in MongoDB?
+    # At least some kind of error checking maybe?
+    my $self = shift;
+    my $stash = $self->stash;
+    my $search = $self->req->param('search') || $stash->{search} || '';
+
+    my $r1 = $self->submissions->search({ comment => qr/$search/i })->all;
+    my $r2 = $self->submissions->search({ link => qr/$search/i })->all;
+    push @$r1, @$r2;
+
+    my $r3 = $self->ogps->search({ title => qr/$search/i})->all;
+    push @$r1, map { $_->submission } @$r3;
+
+    my $r4 = $self->ogps->search({ description => qr/$search/i})->all;
+    push @$r1, map { $_->submission } @$r4;
+
+    my %seen;
+    my @result = grep { !$seen{$_->id}++ } @$r1;
+    $self->render(submissions => \@result);
 }
 
 1;
