@@ -1,5 +1,9 @@
 % layout 'default';
-<h1>Hello <%= session 'username' %></h1>
+<h1 class="title">Hello <%= session 'username' %></h1>
 
-%= tag 'h6' => link_to 'Change password' => 'account/changepw', class => 'btn btn-default'
-%= tag 'h6' => link_to 'Delete account' => 'account/delete', class => 'btn btn-default'
+<div class="field">
+%= tag 'h6' => link_to 'Change password' => 'account/changepw', class => 'button is-link'
+</div>
+<div class="field">
+%= tag 'h6' => link_to 'Delete account' => 'account/delete', class => 'button is-link'
+</div>

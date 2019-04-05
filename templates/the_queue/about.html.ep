@@ -1,16 +1,18 @@
 % layout 'default';
 
-<div class="jumbotron">
-  <h2>Proudly made with:</h2>
-  <div class="row">
-  <ul>
-      <li><%= link_to 'Perl' => 'https://www.perl.org' %></li>
-      <li><%= link_to 'Mojolicious' => 'http://mojolicio.us' %></li>
-      <li><%= link_to 'MongoDB' => 'https://www.mongodb.org' %></li>
-      <li><%= link_to 'Vim' => 'http://www.vim.org' %></li>
-  </ul>
+<section class="hero">
+  <div class="hero-body">
+    <div class="container">
+      <h1 class="title">Proudly made with:</h1>
+      <div class="content">
+        <ul>
+            <li><%= link_to 'Perl' => 'https://www.perl.org' %></li>
+            <li><%= link_to 'Mojolicious' => 'http://mojolicio.us' %></li>
+            <li><%= link_to 'MongoDB' => 'https://www.mongodb.org' %></li>
+            <li><%= link_to 'Vim' => 'http://www.vim.org' %></li>
+        </ul>
+        <p><%= link_to 'Github repository' => 'https://github.com/jbob/the_queue', class => 'button is-link' %></p>
+      </div>
+    </div>
   </div>
-  <div class="row">
-      <p><%= link_to 'Github repository' => 'https://github.com/jbob/the_queue', class => 'btn btn-default' %></p>
-  </div>
-</div>
+</section>

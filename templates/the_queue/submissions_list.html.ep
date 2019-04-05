@@ -2,7 +2,7 @@
 % $submissions = stash 'submissions';
 
 <h1 class="title">Hello <%= session 'username' %>
-    %= link_to 'Create new one!' => url_for('submissions/new'), class => 'button is-size-7'
+    %= link_to 'Create new one!' => url_for('submissions/new'), class => 'button is-link is-size-7'
     %= link_to 'Show all!' => url_for('submissions')->query(q => 'all'), class => 'button is-size-7'
 </h1>
 % if(@$submissions) {

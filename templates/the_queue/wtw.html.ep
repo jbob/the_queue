@@ -8,7 +8,7 @@
     %= label_for checkboxes => 'People in attendence', class => 'label'
     % for my $p (@$people) {
     <div class="field">
-      <label class="label" for="<%= $p->username %>">
+      <label class="checkbox" for="<%= $p->username %>">
         % my $checked = "false";
         % $checked = "true" if grep { $p->username eq $_ } @$attendees;
         % if (grep {$p->username eq $_} @$attendees) {
