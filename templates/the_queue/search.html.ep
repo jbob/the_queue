@@ -17,6 +17,7 @@
             </div>
             <div class="column content">
               %= tag 'h1' => $submission->ogp->title if $submission->ogp->title; 
+              %= tag 'p'  => $submission->ogp->description if $submission->ogp->description;
               %= tag 'h4' => $submission->comment
               %= tag 'h5' => 'Submitted by: ' . $submission->user->username;
               <span>Interested:</span>
