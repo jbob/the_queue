@@ -19,3 +19,44 @@
   </div>
 % end
 
+<div class="box">
+  <div class="columns">
+    <div class="column content">
+      <strong class="has-text-success">Good pages for automatic metadata</strong>
+      <ul>
+        <li>
+          %= link_to Letterboxd => 'https://letterboxd.com'
+        </li>
+        <li>
+          %= link_to Simkl => 'https://simkl.com'
+        </li>
+        <li>
+          %= link_to Netflix => 'https://www.netflix.com'
+        </li>
+      </ul>
+    </div>
+    <div class="column content">
+      <strong class="has-text-danger">Bad pages for automatic metadata</strong>
+      <ul>
+        <li>
+          %= link_to HKMDB => 'http://www.hkmdb.com'
+        </li>
+        <li>
+          %= link_to tvdb => 'https://www.thetvdb.com'
+        </li>
+        <li>
+          %= link_to Wikipedia => 'https://www.wikipedia.org'
+        </li>
+      </ul>
+    </div>
+    <div class="column content">
+      <strong class="has-text-info">The rest</strong>
+      <ul>
+        <li>
+          %= link_to IMDb => 'https://www.imdb.com'
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+
