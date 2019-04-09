@@ -244,7 +244,7 @@ sub upsert {
             $ogdescription = $ogdescription->attr('content') if $ogdescription;
             my $ogimage = $tx->result->dom->at('meta[property="og:image"]');
             $ogimage = $ogimage->attr('content') if $ogimage;
-            unless ($ogimage) {
+            if (not $ogimage) {
                 $ogimage = $tx->result->dom->at('img');
                 $ogimage = $ogimage->attr('src') if $ogimage;
                 $ogimage = $tx->req->url->new($ogimage)->to_abs($tx->req->url) if $ogimage;
@@ -292,13 +292,19 @@ sub done {
     $self->submissions->search({_id => bson_oid($id)})->single(sub {
         my ($submissions, $err, $submission) = @_;
         $self->reply->exception($err) if $err;
+        $self->reply->not_found if not $submission;
     if ($submission->done == 1) {
             $submission->done(0);
         } else {
             $submission->done(1);
     }
     $submission->save;
-    $self->redirect_to($self->req->headers->referrer);
+    $self->respond_to(
+        json => { json => { Success => 1 } },
+        html => sub {
+            $self->redirect_to($self->req->headers->referrer);
+        }
+    );
     });
     $self->render_later;
 }
@@ -312,15 +318,22 @@ sub thumbs {
     $self->submissions->search({_id => bson_oid($id)})->single(sub {
         my ($submissions, $err, $submission) = @_;
         $self->reply->exception($err) if $err;
+        $self->reply->not_found if not $submission;
         $self->users->search({ username => $username })->single(sub {
             my ($users, $err, $user) = @_;
+            $self->reply->not_found if not $user;
             $self->reply->exception($err) if $err;
             my $found = grep { $_->id eq $user->id }  @{ $submission->interested };
             $submission->remove_interested($user) if $found;
             $submission->push_interested($user) if not $found;
         });
         $submission->save;
-        $self->redirect_to($self->req->headers->referrer);
+        $self->respond_to(
+            json => { json => { Success => 1 } },
+            html => sub {
+                $self->redirect_to($self->req->headers->referrer);
+            }
+        );
     });
     $self->render_later;
 }
@@ -333,9 +346,15 @@ sub delete {
     $self->submissions->search({_id => bson_oid($id)})->single(sub {
         my ($submissions, $err, $submission) = @_;
         $self->reply->exception($err) if $err;
+        $self->reply->not_found if not $submission;
         $submission->ogp->remove(sub {}) if $submission->ogp;
         $submissions->remove(sub {});
-        $self->redirect_to($self->req->headers->referrer);
+        $self->respond_to(
+            json => { json => { Success => 1 } },
+            html => sub {
+                $self->redirect_to($self->req->headers->referrer);
+            }
+    );
     });
     $self->render_later;
 }
