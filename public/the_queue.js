@@ -1,4 +1,4 @@
-document.querySelectorAll('. submission-action').forEach(link => {
+document.querySelectorAll('.submission-action').forEach(link => {
     link.addEventListener('click', event => {
         // do the thing
         performStuff(link, event);
@@ -7,7 +7,7 @@ document.querySelectorAll('. submission-action').forEach(link => {
 
 function performStuff (element, event) {
     const href = element.getAttribute('href');
-    const action = href.replace(/submissions\/(\w+)\/.*/, "$1')");
+    const action = href.replace(/submissions\/(\w+)\/.*/, "$1");
 
     let onSuccess;
 
