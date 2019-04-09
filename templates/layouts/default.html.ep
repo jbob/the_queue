@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
 
     <link href="https://fonts.googleapis.com/css?family=Cormorant:700" rel="stylesheet">
-    <style> 
+    <style>
         .fancy-font{ font-family: 'Cormorant', serif; font-size: 24px; }
     </style>
     <script>
@@ -82,6 +82,8 @@
       <%= content =%>
     </div>
   </section>
+
+  <script src="/the_queue.js"></script>
 
   </body>
 </html>
