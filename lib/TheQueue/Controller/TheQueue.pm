@@ -5,10 +5,6 @@ use Mango::BSON 'bson_oid';
 use Array::Utils qw(:all);
 use Mojo::UserAgent;
 
-my $ua = Mojo::UserAgent->new;
-$ua->proxy->detect;
-$ua->max_redirects(3)->connect_timeout(3)->request_timeout(3);
-
 sub login {
     my $self = shift;
     my $stash = $self->stash;
@@ -240,7 +236,7 @@ sub upsert {
             comment => $comment
         });
 
-        $ua->get($link => sub {
+        $self->ua->get($link => sub {
             my ($ua, $tx) = @_;
             my $ogtitle = $tx->result->dom->at('meta[property="og:title"]');
             $ogtitle = $ogtitle->attr('content') if $ogtitle;

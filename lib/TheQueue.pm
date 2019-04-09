@@ -10,6 +10,10 @@ sub startup {
     $self->secrets($config->{secret});
 
     $self->plugin('TheQueue::Helpers');
+    $self->ua->proxy->detect;
+    $self->ua->max_redirects(3);
+    $self->ua->connect_timeout(3);
+    $self->ua->request_timeout(3);
   
     # Router
     my $r = $self->routes;
