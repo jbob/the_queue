@@ -9,7 +9,7 @@
     % for my $submission (@$submissions) {
         <div class="card">
           <header class="card-header">
-            %= tag 'p' => (class => 'card-header-title') => link_to $submission->link => $submission->link
+            %= tag 'h1' => (class => 'card-header-title is-size-4') => link_to $submission->link => $submission->link
           </header>
           <div class="card-content columns">
             <div class="column">

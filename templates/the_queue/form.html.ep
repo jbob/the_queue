@@ -33,6 +33,9 @@
         <li>
           %= link_to Netflix => 'https://www.netflix.com'
         </li>
+        <li>
+          %= link_to YouTube => 'https://www.youtube.com'
+        </li>
       </ul>
     </div>
     <div class="column content">
