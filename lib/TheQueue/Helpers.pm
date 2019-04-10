@@ -56,6 +56,7 @@ sub register {
             if ($user->password eq sha512_hex sha512_hex $password) {
                 $self->session(logged_in => 1);
                 $self->session(password => '');
+                $self->session(expiration => 604800);
                 # Upgrade password to the new, more secure way
                 my $info = $self->gen_pwhash({password => $password});
 
@@ -80,6 +81,7 @@ sub register {
                     if ($password_hash eq $user->password) {
                         $self->session(logged_in => 1);
                         $self->session(password => '');
+                        $self->session(expiration => 604800);
                         return 1;
                     }
                 }
