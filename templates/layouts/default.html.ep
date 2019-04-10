@@ -5,28 +5,13 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bulma/0.7.4/css/bulma.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.4/css/bulma.min.css">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
 
     <link href="https://fonts.googleapis.com/css?family=Cormorant:700" rel="stylesheet">
     <style>
         .fancy-font{ font-family: 'Cormorant', serif; font-size: 24px; }
     </style>
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-          const $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
-          if ($navbarBurgers.length > 0) {
-            $navbarBurgers.forEach( el => {
-              el.addEventListener('click', () => {
-                const target = el.dataset.target;
-                const $target = document.getElementById(target);
-                el.classList.toggle('is-active');
-                $target.classList.toggle('is-active');
-              });
-            });
-          }
-        });
-    </script>
     <title><%= title || config 'title' =%></title>
     <%= content_for 'head' =%>
   </head>
@@ -83,7 +68,7 @@
     </div>
   </section>
 
-  <script src="/the_queue.js"></script>
+  <script src="<%= url_for '/the_queue.js' %>"></script>
 
   </body>
 </html>
