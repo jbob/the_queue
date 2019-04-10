@@ -381,7 +381,7 @@ sub search {
                     my $found = grep { $_->id eq $user->id }  @{ $sub->interested };
                     $sub->{match} = 1 if $found;
                 }
-                $self->render(submissions => \@result);
+                $self->render('the_queue/submissions_list', submissions => \@result);
             });
         });
     });
