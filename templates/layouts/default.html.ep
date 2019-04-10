@@ -5,10 +5,9 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.4/css/bulma.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.4/css/bulma.min.css" integrity="sha384-l9M6Adwf4b8uYw86eNILi6yzN7Zf4VoTPpB88nLLXbZ11ybFDaLcd/a2MU1EZXyK" crossorigin="anonymous">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
-
-    <link href="https://fonts.googleapis.com/css?family=Cormorant:700" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Cormorant:700">
     <style>
         .fancy-font{ font-family: 'Cormorant', serif; font-size: 24px; }
     </style>
@@ -68,7 +67,7 @@
     </div>
   </section>
 
-  <script src="<%= url_for '/the_queue.js' %>"></script>
+  %= javascript url_for '/the_queue.js'
 
   </body>
 </html>
