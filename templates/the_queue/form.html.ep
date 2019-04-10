@@ -36,6 +36,9 @@
         <li>
           %= link_to YouTube => 'https://www.youtube.com'
         </li>
+        <li>
+          %= link_to 'media.ccc.de' => 'https://media.ccc.de'
+        </li>
       </ul>
     </div>
     <div class="column content">
