@@ -294,9 +294,9 @@ sub done {
         $self->reply->exception($err) if $err;
         $self->reply->not_found if not $submission;
     if ($submission->done == 1) {
-            $submission->done(0);
-        } else {
-            $submission->done(1);
+        $submission->done(0);
+    } else {
+        $submission->done(1);
     }
     $submission->save;
     $self->respond_to(
