@@ -3,29 +3,26 @@ use Mojo::Base 'Mojolicious::Controller';
 
 use Mango::BSON 'bson_oid';
 use Array::Utils qw(:all);
-use Mojo::UserAgent;
 
 sub login {
     my $self = shift;
-    my $stash = $self->stash;
-    my $config = $stash->{config};
-
     my $username = $self->param('username') // '';
     my $password = $self->param('password') // '';
+
     if ($username and $password)  {
         $self->session(username => $username);
         $self->session(password => $password);
         return $self->redirect_to($self->session('target') // '/');
-    } else {
-        if ($self->req->method eq 'POST') {
-            $self->flash(msg => 'Please fill the complete form', type => 'danger');
-            return $self->redirect_to('login');
-        }
+    }
+    if ($self->req->method eq 'POST') {
+        $self->flash(msg => 'Please fill the complete form', type => 'danger');
+        return $self->redirect_to('login');
     }
 }
 
 sub logout {
     my $self = shift;
+
     $self->session(logged_in => 0);
     $self->session(username => undef);
     $self->session(attendees => undef);
@@ -151,6 +148,7 @@ sub submissions_list {
     my $self = shift;
     my $username = $self->session('username');
     my $query = $self->req->param('q') // '';
+
     $self->users->search({ username => $username })->single(sub {
         my ($users, $err, $user) = @_;
         $self->reply->exception($err) if $err;
@@ -194,16 +192,19 @@ sub wtw {
                     $sub->user->username eq $att;
                 } @$attendees;
             } @$submission;
-            @relevant_submissions = sort { scalar @{$b->{interested_attendees}} <=> scalar @{$a->{interested_attendees}} } @relevant_submissions;
+            @relevant_submissions = sort {
+                scalar @{$b->{interested_attendees}} <=> scalar @{$a->{interested_attendees}}
+            } @relevant_submissions;
             for my $sub (@relevant_submissions) {
                 my $found = grep { $_->id eq $user->id }  @{ $sub->interested };
                 $sub->{match} = 1 if $found;
             }
-            $self->users->all(sub { 
+            $self->users->all(sub {
                 # Do this just to get a list of all usernames?
                 my ($users, $err, $user) = @_;
                 $self->reply->exception($err) if $err;
-                $self->render(people => $user, attendees => $attendees, submissions => \@relevant_submissions);
+                $self->render(people => $user, attendees => $attendees,
+                              submissions => \@relevant_submissions);
             });
         });
     });
@@ -240,10 +241,13 @@ sub upsert {
             my ($ua, $tx) = @_;
             my $ogtitle = $tx->result->dom->at('meta[property="og:title"]');
             $ogtitle = $ogtitle->attr('content') if $ogtitle;
+
             my $ogdescription = $tx->result->dom->at('meta[property="og:description"]');
             $ogdescription = $ogdescription->attr('content') if $ogdescription;
+
             my $ogimage = $tx->result->dom->at('meta[property="og:image"]');
             $ogimage = $ogimage->attr('content') if $ogimage;
+
             if (not $ogimage) {
                 $ogimage = $tx->result->dom->at('img');
                 $ogimage = $ogimage->attr('src') if $ogimage;
@@ -272,7 +276,6 @@ sub upsert {
 sub edit {
     my $self = shift;
     my $stash = $self->stash;
-    my $username = $self->session('username');
     my $id = $self->req->param('id') || $stash->{id};
     $self->submissions->search({_id => bson_oid($id)})->single(sub {
         my ($submissions, $err, $submission) = @_;
@@ -293,18 +296,18 @@ sub done {
         my ($submissions, $err, $submission) = @_;
         $self->reply->exception($err) if $err;
         $self->reply->not_found if not $submission;
-    if ($submission->done == 1) {
-        $submission->done(0);
-    } else {
-        $submission->done(1);
-    }
-    $submission->save;
-    $self->respond_to(
-        json => { json => { Success => 1 } },
-        html => sub {
-            $self->redirect_to($self->req->headers->referrer);
+        if ($submission->done == 1) {
+            $submission->done(0);
+        } else {
+            $submission->done(1);
         }
-    );
+        $submission->save;
+        $self->respond_to(
+            json => { json => { message => 'success' } },
+            html => sub {
+                $self->redirect_to($self->req->headers->referrer);
+            }
+        );
     });
     $self->render_later;
 }
@@ -326,14 +329,14 @@ sub thumbs {
             my $found = grep { $_->id eq $user->id }  @{ $submission->interested };
             $submission->remove_interested($user) if $found;
             $submission->push_interested($user) if not $found;
+            $submission->save;
+            $self->respond_to(
+                json => { json => { message => 'success' } },
+                html => sub {
+                    $self->redirect_to($self->req->headers->referrer);
+                }
+            );
         });
-        $submission->save;
-        $self->respond_to(
-            json => { json => { Success => 1 } },
-            html => sub {
-                $self->redirect_to($self->req->headers->referrer);
-            }
-        );
     });
     $self->render_later;
 }
@@ -354,7 +357,7 @@ sub delete {
             html => sub {
                 $self->redirect_to($self->req->headers->referrer);
             }
-    );
+        );
     });
     $self->render_later;
 }
