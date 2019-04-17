@@ -94,6 +94,7 @@ sub changepw {
     $self->users->search({ username => $username })->single(sub {
         my ($users, $err, $user) = @_;
         $self->reply->exception($err) if $err;
+        $self->reply->not_found if not $user;
         if ($user) {
             my $old_hash = $self->gen_pwhash({
                 password => $old_password,
@@ -130,6 +131,7 @@ sub deleteacc {
         $self->users->search({ username => $username })->single(sub {
             my ($users, $err, $user) = @_;
             $self->reply->exception($err) if $err;
+            $self->reply->not_found if not $user;
             my $submissions = $user->submissions;
             for my $submission (@$submissions) {
                 $submission->remove;
@@ -152,6 +154,7 @@ sub submissions_list {
     $self->users->search({ username => $username })->single(sub {
         my ($users, $err, $user) = @_;
         $self->reply->exception($err) if $err;
+        $self->reply->not_found if not $user;
         my $search = { done => 0 };
         $search = { } if $query eq 'all';
         $self->submissions->search($search)->all(sub {
@@ -181,8 +184,11 @@ sub wtw {
     $self->users->search({ username => $username })->single(sub {
         my ($users, $err, $user) = @_;
         $self->reply->exception($err) if $err;
+        $self->reply->not_found if not $user;
         $self->submissions->search({done => 0})->all(sub {
             my ($submissions, $err, $submission) = @_;
+            $self->reply->exception($err) if $err;
+            $self->reply->not_found if not $submission;
             my @relevant_submissions = grep {
                 my $sub = $_;
                 my @interested_users = map { $_->username } @{ $sub->interested };
@@ -224,6 +230,7 @@ sub upsert {
         $self->submissions->search({_id => bson_oid($id)})->single(sub {
             my ($submissions, $err, $submission) = @_;
             $self->reply->exception($err) if $err;
+            $self->reply->not_found if not $submission;
             $submission->link($link);
             $submission->comment($comment);
             $submission->save;
@@ -280,6 +287,7 @@ sub edit {
     $self->submissions->search({_id => bson_oid($id)})->single(sub {
         my ($submissions, $err, $submission) = @_;
         $self->reply->exception($err) if $err;
+        $self->reply->not_found if not $submission;
         $self->stash(id      => $id);
         $self->stash(link    => $submission->link);
         $self->stash(comment => $submission->comment);
@@ -324,8 +332,8 @@ sub thumbs {
         $self->reply->not_found if not $submission;
         $self->users->search({ username => $username })->single(sub {
             my ($users, $err, $user) = @_;
-            $self->reply->not_found if not $user;
             $self->reply->exception($err) if $err;
+            $self->reply->not_found if not $user;
             my $found = grep { $_->id eq $user->id }  @{ $submission->interested };
             $submission->remove_interested($user) if $found;
             $submission->push_interested($user) if not $found;
