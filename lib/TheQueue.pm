@@ -5,7 +5,7 @@ use TheQueue::Model;
 # This method will run once at server start
 sub startup {
     my $self = shift;
-  
+
     my $config = $self->plugin('Config');
     $self->secrets($config->{secret});
 
@@ -14,10 +14,10 @@ sub startup {
     $self->ua->max_redirects(3);
     $self->ua->connect_timeout(3);
     $self->ua->request_timeout(3);
-  
+
     # Router
     my $r = $self->routes;
-  
+
     # Normal route to controller
     $r->get('/')->to('TheQueue#index')->name('index');
     $r->any('/login')->to('TheQueue#login');
