@@ -53,39 +53,20 @@ sub register {
         my $user = $app->users->search({ username => $username })->single;
 
         if ($user) {
-            if ($user->password eq sha512_hex sha512_hex $password) {
-                $self->session(logged_in => 1);
-                $self->session(password => '');
-                $self->session(expiration => 604800);
-                # Upgrade password to the new, more secure way
-                my $info = $self->gen_pwhash({password => $password});
-
-                my $salt = $info->{salt};
-                my $cost = $info->{cost};
-                my $new_password = $info->{hash};
-                $user->salt($salt);
-                $user->cost($cost);
-                $user->password($new_password);
-                $user->save;
-                return 1;
-            } else {
-                # No match could mean the password is safed in the new, more secure way
-                # or it is simply wrong
-                my $salt = $user->salt;
-                my $cost = $user->cost;
-                if ($salt and $cost) {
-                    my $password_hash = $self->gen_pwhash({
-                        salt => $salt,
-                        cost => $cost,
-                        password => $password})->{hash};
-                    if ($password_hash eq $user->password) {
-                        $self->session(logged_in => 1);
-                        $self->session(password => '');
-                        $self->session(expiration => 604800);
-                        return 1;
-                    }
-                }
-            }
+           my $salt = $user->salt;
+           my $cost = $user->cost;
+           if ($salt and $cost) {
+               my $password_hash = $self->gen_pwhash({
+                   salt => $salt,
+                   cost => $cost,
+                   password => $password})->{hash};
+               if ($password_hash eq $user->password) {
+                   $self->session(logged_in => 1);
+                   $self->session(password => '');
+                   $self->session(expiration => 604800);
+                   return 1;
+               }
+           }
         }
         $self->flash(msg => 'Invalid login', type => 'danger');
         $self->session(logged_in => 0);
