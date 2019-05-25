@@ -33,6 +33,7 @@ sub startup {
     $l->get('/submissions/new')->to('TheQueue#form');
     $l->get('/submissions/delete/:id')->to('TheQueue#delete');
     $l->get('/submissions/done/:id')->to('TheQueue#done');
+    $l->get('/submissions/available/:id')->to('TheQueue#available');
     $l->get('/submissions/thumbs/:id')->to('TheQueue#thumbs');
     $l->get('/submissions/edit/:id')->to('TheQueue#edit');
     $l->get('/submissions/:id')->to('TheQueue#show');

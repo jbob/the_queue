@@ -35,6 +35,11 @@ function performStuff (element, event) {
                 element.querySelector('span.icon').classList.toggle('has-text-success')
             }
             break
+        case 'available':
+            onSuccess = function () {
+                element.querySelector('span.icon').classList.toggle('has-text-success')
+            }
+            break
         case 'thumbs':
             onSuccess = function () {
                 element.querySelector('span.icon').classList.toggle('has-text-success')

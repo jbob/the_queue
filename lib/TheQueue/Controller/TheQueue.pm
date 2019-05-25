@@ -239,9 +239,10 @@ sub upsert {
     } else {
         # Create new record
         my $newsubmission = $self->submissions->create({
-            link    => $link,
-            done    => 0,
-            comment => $comment
+            link      => $link,
+            done      => 0,
+            available => 0,
+            comment   => $comment
         });
 
         $self->ua->get($link => sub {
@@ -308,6 +309,30 @@ sub done {
             $submission->done(0);
         } else {
             $submission->done(1);
+        }
+        $submission->save;
+        $self->respond_to(
+            json => { json => { message => 'success' } },
+            html => sub {
+                $self->redirect_to($self->req->headers->referrer);
+            }
+        );
+    });
+    $self->render_later;
+}
+
+sub available {
+    my $self = shift;
+    my $stash = $self->stash;
+    my $id = $self->req->param('id') || $stash->{id};
+    $self->submissions->search({_id => bson_oid($id)})->single(sub {
+        my ($submissions, $err, $submission) = @_;
+        $self->reply->exception($err) if $err;
+        $self->reply->not_found if not $submission;
+        if ($submission->available == 1) {
+            $submission->available(0);
+        } else {
+            $submission->available(1);
         }
         $submission->save;
         $self->respond_to(
