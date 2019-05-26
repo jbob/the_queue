@@ -177,6 +177,7 @@ sub wtw {
     my $self = shift;
     my $username = $self->session('username');
     my $attendees = $self->req->every_param('username');
+    my $available = $self->req->param('available');
     # Store attendees info to session, so we can recall it later
     $self->session(attendees => $attendees) if @$attendees;
     $attendees = $self->session('attendees');
@@ -185,7 +186,9 @@ sub wtw {
         my ($users, $err, $user) = @_;
         $self->reply->exception($err) if $err;
         $self->reply->not_found if not $user;
-        $self->submissions->search({done => 0})->all(sub {
+        my $search = { done => 0 };
+        $search->{available} = 1 if $available;
+        $self->submissions->search($search)->all(sub {
             my ($submissions, $err, $submission) = @_;
             $self->reply->exception($err) if $err;
             $self->reply->not_found if not $submission;

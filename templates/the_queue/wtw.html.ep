@@ -20,6 +20,13 @@
       </label>
     </div>
     % }
+    <hr />
+    <div class="field">
+      <label class="checkbox" for="available">
+        %= check_box available => 1, id => "available"
+        Show only available submissions
+      </label>
+    </div>
     <div class="field">
       %= submit_button 'Update', class => 'button is-link'
     </div>
