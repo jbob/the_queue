@@ -389,7 +389,7 @@ sub delete {
         $submission->ogp->remove(sub {}) if $submission->ogp;
         $submissions->remove(sub {});
         $self->respond_to(
-            json => { json => { Success => 1 } },
+            json => { json => { message => 'success' } },
             html => sub {
                 $self->redirect_to($self->req->headers->referrer);
             }
