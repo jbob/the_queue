@@ -367,7 +367,12 @@ sub thumbs {
             $submission->push_interested($user) if not $found;
             $submission->save;
             $self->respond_to(
-                json => { json => { message => 'success' } },
+                json => {
+                    json => {
+                        message => 'success',
+                        interested => [map { $_->username } @{$submission->interested}]
+                    }
+                },
                 html => sub {
                     $self->redirect_to($self->req->headers->referrer);
                 }
