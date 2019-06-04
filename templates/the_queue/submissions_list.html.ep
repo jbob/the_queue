@@ -23,7 +23,7 @@
               %= tag 'h4' => $submission->comment
               %= tag 'h5' => 'Submitted by: ' . $submission->user->username;
               <span>Interested:</span>
-              <ul>
+              <ul class="interested-people-list">
               % for my $i (@{ $submission->interested }) {
                 <li><%= $i->username %></li>
               % }
