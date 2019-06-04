@@ -65,10 +65,10 @@ async function performStuff (element, event) {
     event.preventDefault();
 
     // now the actual async stuff happens
-    const response = fetch(href, {headers: {accept: 'application/json'}});
+    const response = await fetch(href, {headers: {accept: 'application/json'}});
 
     if (response.ok) {
-        const json = response.json();
+        const json = await response.json();
         onSuccess(json);
 
     } else {
