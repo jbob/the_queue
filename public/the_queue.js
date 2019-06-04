@@ -20,7 +20,7 @@ document.querySelectorAll('.submission-action').forEach(link => {
     });
 });
 
-function performStuff (element, event) {
+async function performStuff (element, event) {
     const href = element.getAttribute('href');
     const action = href.replace(/submissions\/(\w+)\/.*/, "$1");
 
@@ -35,20 +35,21 @@ function performStuff (element, event) {
 
         case 'done':
             onSuccess = function () {
-                element.querySelector('span.icon').classList.toggle('has-text-success');
+                toggleButtonStyle(element);
             };
             break;
 
         case 'available':
             onSuccess = function () {
-                element.querySelector('span.icon').classList.toggle('has-text-success');
+                toggleButtonStyle(element);
             };
             break;
 
         case 'thumbs':
             onSuccess = function ({interested}) {
                 // toggle button style
-                element.querySelector('span.icon').classList.toggle('has-text-success');
+                toggleButtonStyle(element);
+
                 // walk up the DOM to the card itself, then climb back down into the list of people who want to see this
                 const ul = element.parentNode.parentNode.querySelector('.interested-people-list');
                 // re-populate the list
@@ -63,17 +64,18 @@ function performStuff (element, event) {
     // kill click for we don't want no navigation
     event.preventDefault();
 
-    fetch(href, {headers: {accept: 'application/json'}})
-        .then(response => {
-            if (response.ok) {
-                return response.json();
+    // now the actual async stuff happens
+    const response = fetch(href, {headers: {accept: 'application/json'}});
 
-            } else {
-                return Promise.reject(response);
-            }
-        })
-        .then(onSuccess)
-        .catch(errorResponse => {
-            console.error('Something is b0rked.', errorResponse);
-        });
+    if (response.ok) {
+        const json = response.json();
+        onSuccess(json);
+
+    } else {
+        console.error('Something is b0rked.', response);
+    }
+}
+
+function toggleButtonStyle (element) {
+    element.querySelector('span.icon').classList.toggle('has-text-success');
 }
