@@ -17,8 +17,7 @@ sub register {
     );
 
     $app->helper(users => sub { $_[0]->app->model->collection('user') });
-    $app->helper(
-        submissions => sub { $_[0]->app->model->collection('submission') });
+    $app->helper(submissions => sub { $_[0]->app->model->collection('submission') });
     $app->helper(ogps => sub { $_[0]->app->model->collection('ogp') });
 
     $app->helper(
@@ -28,12 +27,16 @@ sub register {
             my $password      = $args->{password};
             my $salt          = $args->{salt} // en_base64(rand_bits(12 * 8));
             my $cost          = $args->{cost} // rand_int(5) + 1;
-            my $password_hash = en_base64(
-                bcrypt_hash(
-                    {key_nul => 1, cost => $cost, salt => $salt}, $password
-                )
-            );
-            return {hash => $password_hash, salt => $salt, cost => $cost};
+            my $password_hash = en_base64(bcrypt_hash({
+                        key_nul => 1,
+                        cost    => $cost,
+                        salt    => $salt
+            }, $password));
+            return {
+                hash => $password_hash,
+                salt => $salt,
+                cost => $cost
+            };
         }
     );
 
@@ -59,10 +62,8 @@ sub register {
                 my $salt = $user->salt;
                 my $cost = $user->cost;
                 if ($salt and $cost) {
-                    my $password_hash
-                        = $self->gen_pwhash(
-                        {salt => $salt, cost => $cost, password => $password})
-                        ->{hash};
+                    my $password_hash = $self->gen_pwhash(
+                        {salt => $salt, cost => $cost, password => $password})->{hash};
                     if ($password_hash eq $user->password) {
                         $self->session(logged_in  => 1);
                         $self->session(password   => '');

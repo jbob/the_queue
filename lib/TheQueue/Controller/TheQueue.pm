@@ -57,20 +57,16 @@ sub register {
                 return $self->redirect_to('register');
             }
             my $info = $self->gen_pwhash({password => $password1});
-            $self->users->create(
-                {
+            $self->users->create({
                     username => $username,
                     password => $info->{hash},
                     salt     => $info->{salt},
-                    cost     => $info->{cost}
-                }
-            )->save(
-                sub {
+                    cost     => $info->{cost}})
+                ->save(sub {
                     my ($users, $err, $user) = @_;
                     $self->reply->exception($err) if $err;
                     $self->render(success => 1);
-                }
-            );
+                });
         }
     );
     $self->render_later;
@@ -102,16 +98,14 @@ sub changepw {
             $self->reply->exception($err) if $err;
             $self->reply->not_found if not $user;
             if ($user) {
-                my $old_hash = $self->gen_pwhash(
-                    {
+                my $old_hash
+                    = $self->gen_pwhash({
                         password => $old_password,
                         salt     => $user->salt,
                         cost     => $user->cost
-                    }
-                )->{hash};
+                    })->{hash};
                 if ($old_hash eq $user->password) {
-                    my $new_info
-                        = $self->gen_pwhash({password => $new_password1,});
+                    my $new_info = $self->gen_pwhash({password => $new_password1});
                     $user->password($new_info->{hash});
                     $user->salt($new_info->{salt});
                     $user->cost($new_info->{cost});
@@ -173,8 +167,7 @@ sub submissions_list {
                     my ($submissions, $err, $submission) = @_;
                     $self->reply->exception($err) if $err;
                     for my $sub (@$submission) {
-                        my $found
-                            = grep { $_->id eq $user->id } @{$sub->interested};
+                        my $found = grep { $_->id eq $user->id } @{$sub->interested};
                         $sub->{match} = 1 if $found;
                     }
                     $self->render(submissions => $submission);
@@ -213,22 +206,20 @@ sub wtw {
                     $self->reply->not_found if not $submission;
                     my @relevant_submissions = grep {
                         my $sub = $_;
-                        my @interested_users
-                            = map { $_->username } @{$sub->interested};
-                        $sub->{interested_attendees}
-                            = [intersect(@$attendees, @interested_users)];
+                        my @interested_users = map { $_->username } @{$sub->interested};
+                        $sub->{interested_attendees} = [intersect(@$attendees, @interested_users)];
                         grep {
                             my $att = $_;
                             $sub->user->username eq $att;
                         } @$attendees;
                     } @$submission;
                     @relevant_submissions = sort {
-                        scalar @{$b->{interested_attendees}} <=>
-                            scalar @{$a->{interested_attendees}}
+                        scalar @{$b->{interested_attendees}} <=> scalar @{$a->{interested_attendees}}
                     } @relevant_submissions;
                     for my $sub (@relevant_submissions) {
-                        my $found
-                            = grep { $_->id eq $user->id } @{$sub->interested};
+                        my $found = grep {
+                            $_->id eq $user->id
+                        } @{$sub->interested};
                         $sub->{match} = 1 if $found;
                     }
                     $self->users->all(
@@ -275,8 +266,11 @@ sub upsert {
     } else {
 
         # Create new record
-        my $newsubmission = $self->submissions->create(
-            {link => $link, done => 0, available => 0, comment => $comment});
+        my $newsubmission = $self->submissions->create({
+                link      => $link,
+                done      => 0,
+                available => 0,
+                comment   => $comment});
 
         $self->ua->get(
             $link => sub {
@@ -284,10 +278,8 @@ sub upsert {
                 my $ogtitle = $tx->result->dom->at('meta[property="og:title"]');
                 $ogtitle = $ogtitle->attr('content') if $ogtitle;
 
-                my $ogdescription
-                    = $tx->result->dom->at('meta[property="og:description"]');
-                $ogdescription = $ogdescription->attr('content')
-                    if $ogdescription;
+                my $ogdescription = $tx->result->dom->at('meta[property="og:description"]');
+                $ogdescription = $ogdescription->attr('content') if $ogdescription;
 
                 my $ogimage = $tx->result->dom->at('meta[property="og:image"]');
                 $ogimage = $ogimage->attr('content') if $ogimage;
@@ -295,17 +287,12 @@ sub upsert {
                 if (not $ogimage) {
                     $ogimage = $tx->result->dom->at('img');
                     $ogimage = $ogimage->attr('src') if $ogimage;
-                    $ogimage
-                        = $tx->req->url->new($ogimage)->to_abs($tx->req->url)
-                        if $ogimage;
+                    $ogimage = $tx->req->url->new($ogimage)->to_abs($tx->req->url) if $ogimage;
                 }
-                my $newogp = $self->ogps->create(
-                    {
+                my $newogp = $self->ogps->create({
                         title       => $ogtitle,
                         description => $ogdescription,
-                        image       => $ogimage
-                    }
-                );
+                        image       => $ogimage});
                 $newsubmission->ogp($newogp);
                 $self->users->search({username => $username})->single(
                     sub {
@@ -358,7 +345,11 @@ sub done {
             }
             $submission->save;
             $self->respond_to(
-                json => {json => {message => 'success'}},
+                json => {
+                    json => {
+                        message => 'success'
+                    }
+                },
                 html => sub {
                     $self->redirect_to($self->req->headers->referrer);
                 }
@@ -384,7 +375,11 @@ sub available {
             }
             $submission->save;
             $self->respond_to(
-                json => {json => {message => 'success'}},
+                json => {
+                    json => {
+                        message => 'success'
+                    }
+                },
                 html => sub {
                     $self->redirect_to($self->req->headers->referrer);
                 }
@@ -410,8 +405,7 @@ sub thumbs {
                     my ($users, $err, $user) = @_;
                     $self->reply->exception($err) if $err;
                     $self->reply->not_found if not $user;
-                    my $found = grep { $_->id eq $user->id }
-                        @{$submission->interested};
+                    my $found = grep { $_->id eq $user->id } @{$submission->interested};
                     $submission->remove_interested($user) if $found;
                     $submission->push_interested($user)   if not $found;
                     $submission->save;
@@ -420,8 +414,7 @@ sub thumbs {
                             json => {
                                 message    => 'success',
                                 interested => [
-                                    map { $_->username }
-                                        @{$submission->interested}
+                                    map { $_->username } @{$submission->interested}
                                 ]
                             }
                         },
@@ -449,7 +442,11 @@ sub delete {
             $submission->ogp->remove(sub { }) if $submission->ogp;
             $submissions->remove(sub { });
             $self->respond_to(
-                json => {json => {message => 'success'}},
+                json => {
+                    json => {
+                        message => 'success'
+                    }
+                },
                 html => sub {
                     $self->redirect_to($self->req->headers->referrer);
                 }
@@ -469,20 +466,15 @@ sub search {
         sub {
             my ($users, $err, $user) = @_;
             $self->reply->exception($err) if $err;
-            $self->submissions->search(
-                {'$or' => [{comment => qr/$search/i}, {link => qr/$search/i}]})
-                ->all(
-                sub {
+            $self->submissions->search({
+                    '$or' => [
+                        {comment => qr/$search/i},
+                        {link    => qr/$search/i}
+                    ]
+            })->all(sub {
                     my ($submissions, $err, $hits1) = @_;
                     $self->reply->exception($err) if $err;
-                    $self->ogps->search(
-                        {
-                            '$or' => [
-                                {title       => qr/$search/i},
-                                {description => qr/$search/i}
-                            ]
-                        }
-                    )->all(
+                    $self->ogps->search({'$or' => [{title => qr/$search/i}, {description => qr/$search/i}]})->all(
                         sub {
                             my ($ogps, $err, $hits2) = @_;
                             $self->reply->exception($err) if $err;
@@ -490,18 +482,14 @@ sub search {
                             my %seen;
                             my @result = grep { !$seen{$_->id}++ } @$hits1;
                             for my $sub (@result) {
-                                my $found = grep { $_->id eq $user->id }
-                                    @{$sub->interested};
+                                my $found = grep { $_->id eq $user->id } @{$sub->interested};
                                 $sub->{match} = 1 if $found;
                             }
-                            $self->render(
-                                'the_queue/submissions_list',
-                                submissions => \@result
-                            );
+                            $self->render('the_queue/submissions_list', submissions => \@result);
                         }
                     );
                 }
-                );
+            );
         }
     );
     $self->render_later;
