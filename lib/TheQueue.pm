@@ -23,10 +23,12 @@ sub startup {
     $r->any('/login')->to('TheQueue#login');
     $r->any('/register')->to('TheQueue#register');
     $r->get('/about')->to('TheQueue#about');
-    my $l = $r->under(sub {
-        my $self = shift;
-        return $self->auth;
-    });
+    my $l = $r->under(
+        sub {
+            my $self = shift;
+            return $self->auth;
+        }
+    );
     $l->get('/logout')->to('TheQueue#logout');
     $l->get('/submissions')->to('TheQueue#submissions_list');
     $l->post('/submissions')->to('TheQueue#upsert');
