@@ -162,6 +162,7 @@ sub submissions_list {
             $self->reply->not_found if not $user;
             my $search = {done => 0};
             $search = {} if $query eq 'all';
+            $search = {done => 1} if $query eq 'watched';
             $self->submissions->search($search)->all(
                 sub {
                     my ($submissions, $err, $submission) = @_;
