@@ -1,0 +1,16 @@
+% layout 'default';
+
+% $feed = stash 'feed';
+
+<div class="content">
+  <ul>
+  % for my $item (@{ $feed }) {
+    <li>
+      %= $item->msg;
+      % if ($item->submission) {
+          <a href="<%= url_for 'submissions/'.$item->submission->id %>"><span class="icon"><i class="fas fa-link"></i></span></a>
+      % }
+    </li>
+  % }
+  </ul>
+</div>

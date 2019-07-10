@@ -44,6 +44,7 @@ sub startup {
     $l->any('/account/changepw')->to('TheQueue#changepw');
     $l->any('/account/delete')->to('TheQueue#deleteacc');
     $l->any('/search')->to('TheQueue#search');
+    $l->any('/feed')->to('TheQueue#feed');
 }
 
 1;
