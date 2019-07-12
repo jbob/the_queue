@@ -442,7 +442,7 @@ sub available {
                 $submission->available(0);
                 my $feed = $self->feeds->create(
                     {
-                        msg => sprintf( "%s marked as available",
+                        msg => sprintf( "%s marked as not available",
                             ( $submission->ogp->title || $submission->link ) ),
                         ts => DateTime->now
                     }
@@ -452,7 +452,7 @@ sub available {
             else {
                 my $feed = $self->feeds->create(
                     {
-                        msg => sprintf( "%s marked as not available",
+                        msg => sprintf( "%s marked as available",
                             ( $submission->ogp->title || $submission->link ) ),
                         ts => DateTime->now
                     }
