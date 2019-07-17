@@ -29,14 +29,14 @@
        % if(session 'logged_in') {
          <a class="navbar-item <%= 'is-active' if stash->{action} eq 'submissions_list' %>"
              href="<%= url_for '/submissions' %>">Submissions</a>
-         <a class="navbar-item <%= 'is-active' if stash->{action} eq 'account' %>"
-             href="<%= url_for '/account' %>">My Account</a>
          <a class="navbar-item <%= 'is-active' if stash->{action} eq 'wtw' %>"
              href="<%= url_for '/wtw' %>">What to watch</a>
          <a class="navbar-item <%= 'is-active' if stash->{action} eq 'users_list' %>"
              href="<%= url_for '/users' %>">Users</a>
          <a class="navbar-item <%= 'is-active' if stash->{action} eq 'feed' %>"
              href="<%= url_for '/feed' %>">Feed</a>
+         <a class="navbar-item <%= 'is-active' if stash->{action} eq 'account' %>"
+             href="<%= url_for '/account' %>">My Account</a>
          <a class="navbar-item"
              href="<%= url_for '/logout' %>">Logout</a>
        % } else {

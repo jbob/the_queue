@@ -10,18 +10,17 @@
           % next if $submission->done;
           <div class="card block">
             <div class="card-content is-desktop">
-              <div class="content">
-                %= tag h5 => link_to $submission->link => $submission->link;
-                %= tag h1 => $submission->ogp->title if $submission->ogp->title;
-                %= tag p  => $submission->ogp->description if $submission->ogp->description;
-                %= tag h4 => $submission->comment
-                <span>Interested:</span>
-                <ul class="interested-people-list">
+              <a title="Submission" href="<%= url_for '/submissions/'.$submission->id %>"><span class="icon"><i class="fas fa-link"></i></span></a>
+              %= tag h3 => $submission->ogp->title if $submission->ogp->title;
+              %= tag p  => $submission->ogp->description if $submission->ogp->description;
+              %= tag h4 => $submission->comment
+              <span>Interested:</span>
+              <ul class="interested-people-list">
                 % for my $i (@{ $submission->interested }) {
                   <li><%= $i->username %></li>
                 % }
-                </ul>
-              </div>
+              </ul>
+              %= tag h5 => link_to $submission->link => $submission->link;
             </div>
           </div> <!-- card block -->
       % }
