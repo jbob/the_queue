@@ -33,7 +33,7 @@
 % end
 
 <div class="is-clearfix">
-%= link_to 'Create new one!' => url_for('submissions/new'), class => 'button is-link is-pulled-right'
+%= link_to 'Create new one!' => url_for('/submissions/new'), class => 'button is-link is-pulled-right'
 </div>
 
 
@@ -41,7 +41,7 @@
     % for my $submission (@$submissions) {
         <div class="card block">
           <header class="card-header">
-            %= tag 'h1' => (class => 'card-header-title is-size-4') => (style => 'word-break: break-all') => link_to $submission->link => $submission->link
+            %= tag h1 => (class => 'card-header-title is-size-4') => (style => 'word-break: break-all') => link_to $submission->link => $submission->link
           </header>
           <div class="card-content columns is-desktop">
             <div class="column">
@@ -50,10 +50,10 @@
             </figure>
             </div>
             <div class="column content">
-              %= tag 'h1' => $submission->ogp->title if $submission->ogp->title;
-              %= tag 'p'  => $submission->ogp->description if $submission->ogp->description;
-              %= tag 'h4' => $submission->comment
-              %= tag 'h5' => 'Submitted by: ' . $submission->user->username;
+              %= tag h1 => $submission->ogp->title if $submission->ogp->title;
+              %= tag p  => $submission->ogp->description if $submission->ogp->description;
+              %= tag h4 => $submission->comment
+              %= tag h5 => 'Submitted by: ' . $submission->user->username;
               <span>Interested:</span>
               <ul class="interested-people-list">
               % for my $i (@{ $submission->interested }) {
@@ -64,19 +64,19 @@
             </div>
           </div>
           <footer class="card-footer">
-            <a href="<%= url_for 'submissions/edit/'.$submission->id %>" class="card-footer-item" title="Edit">
+            <a href="<%= url_for '/submissions/edit/'.$submission->id %>" class="card-footer-item" title="Edit">
               <span class="icon"><i class="fas fa-edit"></i></span>
             </a>
-            <a href="<%= url_for 'submissions/delete/'.$submission->id %>" class="card-footer-item submission-action" title="Delete">
+            <a href="<%= url_for '/submissions/delete/'.$submission->id %>" class="card-footer-item submission-action" title="Delete">
               <span class="icon"><i class="fas fa-trash"></i></span>
             </a>
-            <a href="<%= url_for 'submissions/available/'.$submission->id %>" class="card-footer-item submission-action" title="Available">
+            <a href="<%= url_for '/submissions/available/'.$submission->id %>" class="card-footer-item submission-action" title="Available">
               <span class="icon <%= 'has-text-success' if $submission->available %>"><i class="fas fa-hdd"></i></span>
             </a>
-            <a href="<%= url_for 'submissions/done/'.$submission->id %>" class="card-footer-item submission-action" title="Done">
+            <a href="<%= url_for '/submissions/done/'.$submission->id %>" class="card-footer-item submission-action" title="Done">
               <span class="icon <%= 'has-text-success' if $submission->done %>"><i class="fas fa-eye"></i></span>
             </a>
-            <a href="<%= url_for 'submissions/thumbs/'.$submission->id %>" class="card-footer-item submission-action" title="Vote">
+            <a href="<%= url_for '/submissions/thumbs/'.$submission->id %>" class="card-footer-item submission-action" title="Vote">
               <span class="icon <%= 'has-text-success' if $submission->{match} %>"><i class="fas fa-thumbs-up"></i></span>
             </a>
           </footer>

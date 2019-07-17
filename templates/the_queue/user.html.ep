@@ -1,0 +1,40 @@
+% layout 'default';
+% $user = stash 'user';
+
+<div class="content">
+  %= tag h1 => $user->username
+  <div class="columns">
+    <div class="column">
+      %= tag h2 => "Submissions"
+      % for my $submission ( @{ $user->submissions } ) {
+          % next if $submission->done;
+          <div class="card block">
+            <div class="card-content is-desktop">
+              <div class="content">
+                %= tag h5 => link_to $submission->link => $submission->link;
+                %= tag h1 => $submission->ogp->title if $submission->ogp->title;
+                %= tag p  => $submission->ogp->description if $submission->ogp->description;
+                %= tag h4 => $submission->comment
+                <span>Interested:</span>
+                <ul class="interested-people-list">
+                % for my $i (@{ $submission->interested }) {
+                  <li><%= $i->username %></li>
+                % }
+                </ul>
+              </div>
+            </div>
+          </div> <!-- card block -->
+      % }
+    </div>
+    <div class="column">
+      %= tag h2 => "Activity"
+      <ul>
+      % for my $feed ( reverse @{ $user->feeds } ) {
+        <li>
+          %= $feed->msg
+        </li>
+      % }
+      </ul>
+    </div>
+  </div>
+</div>

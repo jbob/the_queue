@@ -1,0 +1,16 @@
+% layout 'default';
+% $users = stash 'users';
+
+% if(@$users) {
+    <div class="content">
+      <ul>
+      % for my $user (@$users) {
+          <li>
+            %= link_to $user->username => url_for '/users/' . $user->id
+          </li>
+      % }
+      </ul>
+    </div>
+% } else {
+  <h4>No (open) submissions yet :-(</h4>
+% }

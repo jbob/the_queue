@@ -28,26 +28,28 @@
       <div class="navbar-start">
        % if(session 'logged_in') {
          <a class="navbar-item <%= 'is-active' if stash->{action} eq 'submissions_list' %>"
-             href="<%= url_for 'submissions' %>">Submissions</a>
+             href="<%= url_for '/submissions' %>">Submissions</a>
          <a class="navbar-item <%= 'is-active' if stash->{action} eq 'account' %>"
-             href="<%= url_for 'account' %>">My Account</a>
+             href="<%= url_for '/account' %>">My Account</a>
          <a class="navbar-item <%= 'is-active' if stash->{action} eq 'wtw' %>"
-             href="<%= url_for 'wtw' %>">What to watch</a>
+             href="<%= url_for '/wtw' %>">What to watch</a>
+         <a class="navbar-item <%= 'is-active' if stash->{action} eq 'users_list' %>"
+             href="<%= url_for '/users' %>">Users</a>
          <a class="navbar-item <%= 'is-active' if stash->{action} eq 'feed' %>"
-             href="<%= url_for 'feed' %>">Feed</a>
+             href="<%= url_for '/feed' %>">Feed</a>
          <a class="navbar-item"
-             href="<%= url_for 'logout' %>">Logout</a>
+             href="<%= url_for '/logout' %>">Logout</a>
        % } else {
          <a class="navbar-item <%= 'is-active' if stash->{action} eq 'login' %>"
-             href="<%= url_for 'wtw' %>">Login</a>
+             href="<%= url_for '/wtw' %>">Login</a>
          <a class="navbar-item <%= 'is-active' if stash->{action} eq 'register' %>"
-             href="<%= url_for 'register' %>">Register</a>
+             href="<%= url_for '/register' %>">Register</a>
        % }
          <a class="navbar-item <%= 'is-active' if stash->{action} eq 'about' %>"
-             href="<%= url_for 'about' %>">About</a>
+             href="<%= url_for '/about' %>">About</a>
       </div>
       <div class="navbar-end">
-        <form method="GET" action="<%= url_for 'search' %>">
+        <form method="GET" action="<%= url_for '/search' %>">
           <div class="navbar-item field">
             <p class="control has-icons-right">
                 <input class="input" name="search" placeholder="Search...">

@@ -682,4 +682,34 @@ sub feed {
     $self->render_later;
 }
 
+sub users_list {
+    my $self  = shift;
+    my $stash = $self->stash;
+    my $id    = $stash->{id} || $self->req->param('id') || '';
+    if ($id) {
+        $self->users->search( { _id => bson_oid($id) } )->single(
+            sub {
+                my ( $users, $err, $user ) = @_;
+                return $self->reply->exception($err) if $err;
+                return $self->reply->not_found if not $user;
+                $self->render(
+                    'the_queue/user',
+                    user => $user
+                );
+            }
+        );
+    } else {
+        $self->users->all(
+            sub {
+                my ( $users, $err, $user ) = @_;
+                return $self->reply->exception($err) if $err;
+                return $self->reply->not_found if not $user;
+                $self->render(
+                    users => $user
+                );
+            }
+        );
+    }
+    $self->render_later;
+}
 1;
