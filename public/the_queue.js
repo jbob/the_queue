@@ -23,7 +23,7 @@ document.querySelectorAll('.submission-action').forEach(link => {
 
 async function performStuff (element, event) {
   const href = element.getAttribute('href')
-  const action = href.replace(/submissions\/(\w+)\/.*/, '$1')
+  const action = href.replace(/\/submissions\/(\w+)\/.*/, '$1')
 
   let onSuccess
 

@@ -6,7 +6,7 @@
   <div class="columns">
     <div class="column">
       %= tag h2 => "Submissions"
-      % for my $submission ( @{ $user->submissions } ) {
+      % for my $submission ( reverse @{ $user->submissions } ) {
           % next if $submission->done;
           <div class="card block">
             <div class="card-content is-desktop">
