@@ -47,6 +47,7 @@ sub startup {
     $l->any('/account/delete')->to('TheQueue#deleteacc');
     $l->any('/search')->to('TheQueue#search');
     $l->any('/feed')->to('TheQueue#feed');
+    $l->any('/impersonate')->to('TheQueue#impersonate');
 }
 
 1;

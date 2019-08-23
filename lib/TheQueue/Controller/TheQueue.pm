@@ -682,6 +682,47 @@ sub feed {
     $self->render_later;
 }
 
+sub impersonate {
+    my $self = shift;
+    my $stash = $self->stash;
+    my $username  = $self->param('username') // '';
+
+    if ( $self->req->method eq 'GET' ) {
+        $self->users->all(
+            sub {
+                my ( $users, $err, $user ) = @_;
+                return $self->reply->exception($err) if $err;
+                return $self->reply->not_found if not $user;
+                $self->render( users => $user );
+            }
+        );
+        return $self->render_later;
+    }
+
+    if (not $username) {
+        $self->flash(
+            msg  => 'Please choose an user!',
+            type => 'danger'
+        );
+        return $self->redirect_to('impersonate');
+    }
+
+    $self->users->search( { username => $username } )->single(
+        sub {
+            my ( $users, $err, $user ) = @_;
+            return $self->reply->exception($err) if $err;
+            return $self->reply->not_found if not $user;
+            $self->session( username => $username );
+            $self->flash(
+                msg  => 'Be excellent to each other!',
+                type => 'danger'
+            );
+            return $self->redirect_to('/');
+        }
+    );
+    $self->render_later;
+}
+
 sub users_list {
     my $self  = shift;
     my $stash = $self->stash;

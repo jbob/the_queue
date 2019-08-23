@@ -1,0 +1,24 @@
+% layout 'default';
+% $users = stash 'users';
+
+% if(@$users) {
+  <div class="container">
+    <h3 class="title">Having an identity crisis?</h3>
+    <form method="POST" class="box">
+      % for my $user (@$users) {
+        <div class="field">
+          <label class="radio">
+            %= radio_button username => $user->username
+            %= $user->username
+          </label>
+        </div>
+      % }
+      <div class="field">
+        %= submit_button 'Impersonate', class => 'button is-link'
+      </div>
+  </div>
+    </form>
+  </div>
+% } else {
+  <h4>There are no users?</h4>
+% }
