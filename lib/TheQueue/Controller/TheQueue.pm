@@ -685,39 +685,49 @@ sub feed {
 sub impersonate {
     my $self = shift;
     my $stash = $self->stash;
-    my $username  = $self->param('username') // '';
-
-    if ( $self->req->method eq 'GET' ) {
-        $self->users->all(
-            sub {
-                my ( $users, $err, $user ) = @_;
-                return $self->reply->exception($err) if $err;
-                return $self->reply->not_found if not $user;
-                $self->render( users => $user );
-            }
-        );
-        return $self->render_later;
-    }
-
-    if (not $username) {
-        $self->flash(
-            msg  => 'Please choose an user!',
-            type => 'danger'
-        );
-        return $self->redirect_to('impersonate');
-    }
-
-    $self->users->search( { username => $username } )->single(
+    my $orig_username = $self->session('username');
+    $self->users->search( { username => $orig_username } )->single(
         sub {
-            my ( $users, $err, $user ) = @_;
+            my ( $users, $err, $orig_user ) = @_;
             return $self->reply->exception($err) if $err;
-            return $self->reply->not_found if not $user;
-            $self->session( username => $username );
-            $self->flash(
-                msg  => 'Be excellent to each other!',
-                type => 'danger'
+            return $self->reply->not_found if not $orig_user;
+            return $self->render(status => 403, text => 'Forbidden')
+                if not $orig_user->admin;
+            my $username  = $self->param('username') // '';
+
+            if ( $self->req->method eq 'GET' ) {
+                $self->users->all(
+                    sub {
+                        my ( $users, $err, $user ) = @_;
+                        return $self->reply->exception($err) if $err;
+                        return $self->reply->not_found if not $user;
+                        $self->render( users => $user );
+                    }
+                );
+                return $self->render_later;
+            }
+
+            if (not $username) {
+                $self->flash(
+                    msg  => 'Please choose an user!',
+                    type => 'danger'
+                );
+                return $self->redirect_to('impersonate');
+            }
+
+            $self->users->search( { username => $username } )->single(
+                sub {
+                    my ( $users, $err, $user ) = @_;
+                    return $self->reply->exception($err) if $err;
+                    return $self->reply->not_found if not $user;
+                    $self->session( username => $username );
+                    $self->flash(
+                        msg  => 'Be excellent to each other!',
+                        type => 'danger'
+                    );
+                    return $self->redirect_to('/');
+                }
             );
-            return $self->redirect_to('/');
         }
     );
     $self->render_later;

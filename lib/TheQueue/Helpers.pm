@@ -68,6 +68,7 @@ sub register {
                     if ($password_hash eq $user->password) {
                         $self->session(logged_in  => 1);
                         $self->session(password   => '');
+                        $self->session(admin      => $user->admin);
                         $self->session(expiration => 604800);
                         return 1;
                     }

@@ -26,7 +26,7 @@
     </div>
     <div class="navbar-menu" id="mynavbar">
       <div class="navbar-start">
-       % if(session 'logged_in') {
+       % if (session 'logged_in') {
          <a class="navbar-item <%= 'is-active' if stash->{action} eq 'submissions_list' %>"
              href="<%= url_for '/submissions' %>">Submissions</a>
          <a class="navbar-item <%= 'is-active' if stash->{action} eq 'wtw' %>"
@@ -37,8 +37,10 @@
              href="<%= url_for '/feed' %>">Feed</a>
          <a class="navbar-item <%= 'is-active' if stash->{action} eq 'account' %>"
              href="<%= url_for '/account' %>">My Account</a>
+         % if (session 'admin') {
          <a class="navbar-item <%= 'is-active' if stash->{action} eq 'impersonate' %>"
              href="<%= url_for '/impersonate' %>">Impersonate</a>
+         % }
          <a class="navbar-item"
              href="<%= url_for '/logout' %>">Logout</a>
        % } else {
