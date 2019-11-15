@@ -676,8 +676,6 @@ sub feed {
             '$gt' => DateTime->now->subtract( days => 120 )->stringify
         }
     };
-    use Data::Dumper;
-    warn Dumper $search;
 
     $self->feeds->search($search)->all(
         sub {
