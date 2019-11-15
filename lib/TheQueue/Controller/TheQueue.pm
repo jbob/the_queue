@@ -671,11 +671,22 @@ sub feed {
     my $self  = shift;
     my $stash = $self->stash;
 
-    $self->feeds->search( {}, { limit => 100 } )->all(
+    my $search = {
+        ts => {
+            '$gt' => DateTime->now->subtract( days => 120 )->stringify
+        }
+    };
+    use Data::Dumper;
+    warn Dumper $search;
+
+    $self->feeds->search($search)->all(
         sub {
             my ( $feeds, $err, $feed ) = @_;
             $self->reply->exception($err) if $err;
             $self->reply->not_found if not $feed;
+            # Sort here, should really happen at the DB level but neither
+            # Mandel nor Mango seem to support that
+            @{ $feed } = sort { $a->ts cmp $b->ts } @{ $feed };
             $self->render( feed => [ reverse @{$feed} ] );
         }
     );
