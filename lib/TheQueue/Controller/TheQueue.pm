@@ -701,7 +701,7 @@ sub impersonate {
             return $self->reply->exception($err) if $err;
             return $self->reply->not_found if not $orig_user;
             return $self->render(status => 403, text => 'Forbidden')
-                if not $orig_user->admin;
+                if not $orig_user->admin and not $self->session('was_admin');
             my $username  = $self->param('username') // '';
 
             if ( $self->req->method eq 'GET' ) {
@@ -730,6 +730,7 @@ sub impersonate {
                     return $self->reply->exception($err) if $err;
                     return $self->reply->not_found if not $user;
                     $self->session( username => $username );
+                    $self->session( was_admin => 1 );
                     $self->flash(
                         msg  => 'Be excellent to each other!',
                         type => 'danger'
