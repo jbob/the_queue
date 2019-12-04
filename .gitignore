@@ -3,3 +3,4 @@ script/hypnotoad.pid
 *.swp
 .idea/
 .DS_Store
+tags
