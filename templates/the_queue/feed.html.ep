@@ -11,7 +11,7 @@
           <a title="Submission" href="<%= url_for '/submissions/'.$item->submission->id %>"><span class="icon"><i class="fas fa-link"></i></span></a>
       % }
       % if ($item->user) {
-          <a title="User" href="<%= url_for '/users/'.$item->user->id %>"><span class="icon"><i class="fas fa-user"></i></span></a>
+          <a title="User" href="<%= url_for '/user/'.$item->user->id %>"><span class="icon"><i class="fas fa-user"></i></span></a>
       % }
     </li>
   % }

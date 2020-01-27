@@ -5,7 +5,7 @@
   %= tag h1 => $user->username
   <div class="columns">
     <div class="column">
-      %= tag h2 => "Submissions"
+      %= tag h2 => "Open Submissions"
       % for my $submission ( reverse @{ $user->submissions } ) {
           % next if $submission->done;
           <div class="card block">

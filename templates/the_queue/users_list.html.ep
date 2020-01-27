@@ -6,7 +6,7 @@
       <ul>
       % for my $user (@$users) {
           <li>
-            %= link_to $user->username => url_for '/users/' . $user->id
+            %= link_to $user->username => url_for '/user/' . $user->id
           </li>
       % }
       </ul>

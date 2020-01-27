@@ -40,7 +40,7 @@ sub startup {
     $l->get('/submissions/edit/:id')->to('TheQueue#edit');
     $l->get('/submissions/:id')->to('TheQueue#show');
     $l->get('/users')->to('TheQueue#users_list');
-    $l->get('/users/:id')->to('TheQueue#users_list');
+    $l->get('/user/:id')->to('TheQueue#users_list');
     $l->get('/account')->to('TheQueue#account');
     $l->any('/wtw')->to('TheQueue#wtw');
     $l->any('/account/changepw')->to('TheQueue#changepw');
