@@ -195,7 +195,32 @@ sub submissions_list {
                           grep { $_->id eq $user->id } @{ $sub->interested };
                         $sub->{match} = 1 if $found;
                     }
-                    $self->render( submissions => $submission );
+                    $self->respond_to(
+                        json => {
+                            json => {
+                                 submissions => [map {
+                                         my $sub = $_;
+                                         {
+                                             title => $sub->ogp->title,
+                                             image => $sub->ogp->image,
+                                             description => $sub->ogp->description,
+                                             comment => $sub->comment,
+                                             link => $sub->link,
+                                             available => $sub->available,
+                                             done => $sub->done,
+                                             match => $sub->{match},
+                                             submitter => $sub->user->username,
+                                             interested => [map {
+                                                 $_->username;
+                                             } @{$sub->interested}]
+                                         };
+                                     } @$submission],
+                            }
+                        },
+                        html => sub {
+                             $self->render( submissions => $submission );
+                        }
+                    );
                 }
             );
         }
@@ -254,10 +279,37 @@ sub wtw {
                             # Do this just to get a list of all usernames?
                             my ( $users, $err, $user ) = @_;
                             return $self->reply->exception($err) if $err;
-                            $self->render(
-                                people      => $user,
-                                attendees   => $attendees,
-                                submissions => \@relevant_submissions
+                            $self->respond_to(
+                                json => {
+                                    json => {
+                                         attendees   => $attendees,
+                                         submissions => [map {
+                                                 my $sub = $_;
+                                                 {
+                                                     title => $sub->ogp->title,
+                                                     image => $sub->ogp->image,
+                                                     description => $sub->ogp->description,
+                                                     comment => $sub->comment,
+                                                     link => $sub->link,
+                                                     available => $sub->available,
+                                                     done => $sub->done,
+                                                     match => $sub->{match},
+                                                     submitter => $sub->user->username,
+                                                     interested => [map {
+                                                         $_->username;
+                                                     } @{$sub->interested}]
+                                                 };
+                                             } @relevant_submissions],
+                                         people      => [map { $_->username } @{$user}]
+                                    }
+                                },
+                                html => sub {
+                                     $self->render(
+                                         people      => $user,
+                                         attendees   => $attendees,
+                                         submissions => \@relevant_submissions
+                                     );
+                                }
                             );
                         }
                     );

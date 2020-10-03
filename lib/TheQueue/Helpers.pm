@@ -48,6 +48,27 @@ sub register {
                 if $self->session
                 and $self->session('logged_in')
                 and $self->session('logged_in') == 1;
+            if ($self->req->headers->authorization) {
+                my ($username, $password) = $self->req->headers->authorization =~ m/Bearer (.*):(.*)/;
+                my $user     = $app->users->search({username => $username})->single;
+                if ($user) {
+                    my $salt = $user->salt;
+                    my $cost = $user->cost;
+                    if ($salt and $cost) {
+                        my $password_hash = $self->gen_pwhash(
+                            {salt => $salt, cost => $cost, password => $password})->{hash};
+                        $self->session(logged_in  => 1);
+                        $self->session(password   => '');
+                        $self->session(admin      => $user->admin);
+                        $self->session(expiration => 604800);
+                        $self->session(username => $username);
+                        return 1 if $password_hash eq $user->password;
+                    }
+                } else {
+                    return 0;
+                }
+            }
+
             if (not $self->session('username')) {
                 $self->session(logged_in => 0);
                 $self->session(target    => $self->req->url->to_abs->path);
