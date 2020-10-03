@@ -15,7 +15,7 @@ in action at [https://q.markusko.ch](https://q.markusko.ch)
 Simply clone or download the the repository, adjust the the\_queue.conf file and
 execute:
 
-    $ cpnam --notest --installdeps .
+    $ cpanm --notest --installdeps .
 
 then:
 
