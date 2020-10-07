@@ -10,6 +10,16 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Cormorant:700">
     <style>
         .fancy-font{ font-family: 'Cormorant', serif; font-size: 24px; }
+
+        #thevuequeue-banner {
+            position: absolute;
+            bottom: 0;
+            background-color: #f5f5f5;
+            width: 100%;
+            text-align: center;
+            padding: .3em;
+            font-size: 75%;
+        }
     </style>
     <title><%= title || config 'title' =%></title>
     <%= content_for 'head' =%>
@@ -77,6 +87,9 @@
 
   %= javascript url_for '/the_queue.js'
 
+    <div id="thevuequeue-banner">
+      Try the vue queue (beta) <a href="thevuequeue/index.html">here</a>
+    </div>
   </body>
 </html>
 

@@ -1,33 +1,54 @@
 # TheQueue
 
-Web-based queue thingy written with Perl/Mojolicious/MongoDB/Mandel. See it
-in action at [https://q.markusko.ch](https://q.markusko.ch)
-
-## Dependencies
-
+Web-based queue thingy written in Perl. Depends on:
 * Perl
 * Mojolicious
 * Mandel (ORM module for Mango/MongoDB)
 * MongoDB
 
-## Installation
+See it in action at [https://q.markusko.ch](https://q.markusko.ch).
 
-Simply clone or download the the repository, adjust the the\_queue.conf file and
-execute:
+## Installing dependencies
 
-    $ cpanm --notest --installdeps .
+Simply clone or download the repository and run:
 
-then:
+```bash
+cpanm --notest --installdeps .
+```
 
-    $ morbo script/the_queue (for development), or
-    $ hypnotoad script/the_queue (for production)
+## Configuration
 
-The app will then by default listen on either 127.0.0.1:3000 (development) or
-[::1]:8014 (production).
+Found in [the_queue.conf](the_queue.conf). 
+
+## Running production
+
+```bash
+hypnotoad script/the_queue
+```
+
+By default, the production server will listen on `[::1]:8014`.
 
 To access your app via a reverse proxy, create a minimal VHost like this:
 
-    <VirtualHost *:443>
-        ServerName q.markusko.ch
-        ProxyPass / http://localhost:8014/
-    </VirtualHost>
+```
+<VirtualHost *:443>
+    ServerName q.markusko.ch
+    ProxyPass / http://localhost:8014/
+</VirtualHost>
+```
+
+## Running dev environment
+
+Start the dev server listening on http://127.0.0.1:3000 with:
+
+```bash
+morbo script/the_queue
+```
+
+Hint: if you don't have a mongo server, you can simply spin one up in Docker with:
+
+```bash
+docker run --rm -d --name queue-mongo -p 27017:27017 mongo
+```
+
+(just remember to `docker stop queue-mongo` the database again when you don't need it anymore)

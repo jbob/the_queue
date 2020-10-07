@@ -4,3 +4,6 @@ script/hypnotoad.pid
 .idea/
 .DS_Store
 tags
+
+# don't add the output of the vue build to git!
+public/thevuequeue/
