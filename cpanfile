@@ -8,3 +8,4 @@ requires 'Crypt::Eksblowfish::Bcrypt';
 requires 'Data::Entropy::Algorithms';
 requires 'Array::Utils';
 requires 'DateTime';
+requires 'DateTime::TimeZone::Catalog';
