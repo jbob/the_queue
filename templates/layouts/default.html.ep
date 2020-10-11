@@ -12,13 +12,17 @@
         .fancy-font{ font-family: 'Cormorant', serif; font-size: 24px; }
 
         #thevuequeue-banner {
-            position: absolute;
+            position: fixed;
             bottom: 0;
             background-color: #f5f5f5;
             width: 100%;
             text-align: center;
             padding: .3em;
             font-size: 75%;
+        }
+
+        body {
+            padding-bottom: 1.6em;
         }
     </style>
     <title><%= title || config 'title' =%></title>

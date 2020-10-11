@@ -29,13 +29,10 @@ export default {
   },
   mounted() {
     this.status = "loading";
-    fetch("/submissions", {
-      credentials: "same-origin",
-      headers: { accept: "application/json" }
-    })
+    fetch("/submissions.json")
       .then(resp => resp.json())
-      .then(json => {
-        this.submissions = json.submissions;
+      .then(({submissions}) => {
+        this.submissions = submissions;
         this.status = "ready";
       })
       .catch(() => {
