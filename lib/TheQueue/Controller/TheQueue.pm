@@ -195,9 +195,8 @@ sub submissions_list {
                             grep { $_->id eq $user->id } @{$sub->interested};
                         $sub->{match} = 1 if $found;
                     }
-                    $self->respond_to(
-                        json => {
-                            json => {
+                    if ($self->req->url->path =~ m|^/api/|) {
+                        $self->render(json => {
                                 submissions => [map {
                                         my $sub = $_;
                                         {
@@ -222,12 +221,10 @@ sub submissions_list {
                                             } @{$sub->interested}]
                                         };
                                 } @$submission],
-                            }
-                        },
-                        html => sub {
-                            $self->render(submissions => $submission);
-                        }
-                    );
+                        });
+                    } else {
+                        $self->render(submissions => $submission);
+                    }
                 }
             );
         }
@@ -286,9 +283,8 @@ sub wtw {
                             # Do this just to get a list of all usernames?
                             my ($users, $err, $user) = @_;
                             return $self->reply->exception($err) if $err;
-                            $self->respond_to(
-                                json => {
-                                    json => {
+                            if ($self->req->url->path =~ m|^/api/|) {
+                                $self->render(json => {
                                         attendees   => $attendees,
                                         submissions => [map {
                                                 my $sub = $_;
@@ -315,16 +311,14 @@ sub wtw {
                                                 };
                                         } @relevant_submissions],
                                         people => [map { $_->username } @{$user}]
-                                    }
-                                },
-                                html => sub {
-                                    $self->render(
-                                        people      => $user,
-                                        attendees   => $attendees,
-                                        submissions => \@relevant_submissions
-                                    );
-                                }
-                            );
+                                    });
+                            } else {
+                                $self->render(
+                                    people      => $user,
+                                    attendees   => $attendees,
+                                    submissions => \@relevant_submissions
+                                );
+                            }
                         }
                     );
                 }
@@ -752,9 +746,8 @@ sub feed {
             # Sort here, should really happen at the DB level but neither
             # Mandel nor Mango seem to support that
             @{$feed} = sort { $a->ts cmp $b->ts } @{$feed};
-            $self->respond_to(
-                json => {
-                    json => {
+            if ($self->req->url->path =~ m|^/api/|) {
+                $self->render(json => {
                         feed => [
                             reverse map {
                                 my $item = $_;
@@ -789,12 +782,10 @@ sub feed {
                                 $ret;
                             } @{$feed}
                         ]
-                    }
-                },
-                html => sub {
-                    $self->render(feed => [reverse @{$feed}]);
-                }
-            );
+                    });
+            } else {
+                $self->render(feed => [reverse @{$feed}]);
+            }
         }
     );
     $self->render_later;

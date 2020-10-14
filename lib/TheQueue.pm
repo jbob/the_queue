@@ -48,6 +48,12 @@ sub startup {
     $l->any('/search')->to('TheQueue#search');
     $l->any('/feed')->to('TheQueue#feed');
     $l->any('/impersonate')->to('TheQueue#impersonate');
+
+    # API
+    $l->get('/api/submissions')->to('TheQueue#submissions_list');
+    $l->any('/api/wtw')->to('TheQueue#wtw');
+    $l->any('/api/feed')->to('TheQueue#feed');
+
 }
 
 1;
