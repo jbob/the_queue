@@ -29,7 +29,7 @@ export default {
   },
   mounted() {
     this.status = "loading";
-    fetch("/submissions.json")
+    fetch("/api/submissions")
       .then(resp => resp.json())
       .then(({submissions}) => {
         this.submissions = submissions;
