@@ -16,7 +16,7 @@ sub submissions_list {
             return $self->reply->exception($err) if $err;
             return $self->reply->not_found if not $user;
             my $search = {done => 0};
-            $search = {}          if $query eq 'all';
+            $search = {} if $query eq 'all';
             $search = {done => 1} if $query eq 'watched';
             $self->submissions->search($search)->all(
                 sub {
@@ -142,13 +142,13 @@ sub wtw {
                                                     } @{$sub->interested}]
                                                 };
                                         } @relevant_submissions],
-                                        people => [map { 
-                                            {
-                                                username => $_->username,
-                                                id       => $_->id
-                                            }
+                                        people => [map {
+                                                {
+                                                    username => $_->username,
+                                                    id       => $_->id
+                                                }
                                         } @{$user}]
-                                    });
+                                });
                             } else {
                                 $self->render(
                                     people      => $user,
@@ -468,7 +468,7 @@ sub delete {
             );
             $feed->save;
             $submission->ogp->remove(sub { }) if $submission->ogp;
-            $submissions->remove(sub     { });
+            $submissions->remove(sub { });
             $self->respond_to(
                 json => {
                     json => {

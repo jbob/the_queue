@@ -60,7 +60,7 @@ sub feed {
                                 $ret;
                             } @{$feed}
                         ]
-                    });
+                });
             } else {
                 $self->render(feed => [reverse @{$feed}]);
             }
