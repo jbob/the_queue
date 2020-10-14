@@ -347,6 +347,7 @@ sub available {
                 $submission->add_feeds($feed);
             }
             else {
+                $submission->available(1);
                 my $feed = $self->feeds->create(
                     {
                         msg => sprintf("%s marked as available",
@@ -355,7 +356,6 @@ sub available {
                     }
                 );
                 $submission->add_feeds($feed);
-                $submission->available(1);
             }
             $submission->save;
             $self->respond_to(
