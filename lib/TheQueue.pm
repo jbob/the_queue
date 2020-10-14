@@ -20,8 +20,8 @@ sub startup {
 
     # Normal route to controller
     $r->get('/')->to('TheQueue#index')->name('index');
-    $r->any('/login')->to('TheQueue#login');
-    $r->any('/register')->to('TheQueue#register');
+    $r->any('/login')->to('User#login');
+    $r->any('/register')->to('User#register');
     $r->get('/about')->to('TheQueue#about');
     my $l = $r->under(
         sub {
@@ -29,7 +29,7 @@ sub startup {
             return $self->auth;
         }
     );
-    $l->get('/logout')->to('TheQueue#logout');
+    $l->get('/logout')->to('User#logout');
     $l->get('/submissions')->to('TheQueue#submissions_list');
     $l->post('/submissions')->to('TheQueue#upsert');
     $l->get('/submissions/new')->to('TheQueue#form');
@@ -39,20 +39,20 @@ sub startup {
     $l->get('/submissions/thumbs/:id')->to('TheQueue#thumbs');
     $l->get('/submissions/edit/:id')->to('TheQueue#edit');
     $l->get('/submissions/:id')->to('TheQueue#show');
-    $l->get('/users')->to('TheQueue#users_list');
-    $l->get('/user/:id')->to('TheQueue#users_list');
-    $l->get('/account')->to('TheQueue#account');
+    $l->get('/users')->to('User#users_list');
+    $l->get('/user/:id')->to('User#users_list');
+    $l->get('/account')->to('User#account');
     $l->any('/wtw')->to('TheQueue#wtw');
-    $l->any('/account/changepw')->to('TheQueue#changepw');
-    $l->any('/account/delete')->to('TheQueue#deleteacc');
+    $l->any('/account/changepw')->to('User#changepw');
+    $l->any('/account/delete')->to('User#deleteacc');
     $l->any('/search')->to('TheQueue#search');
-    $l->any('/feed')->to('TheQueue#feed');
-    $l->any('/impersonate')->to('TheQueue#impersonate');
+    $l->any('/feed')->to('Feed#feed');
+    $l->any('/impersonate')->to('User#impersonate');
 
     # API
     $l->get('/api/submissions')->to('TheQueue#submissions_list');
     $l->any('/api/wtw')->to('TheQueue#wtw');
-    $l->any('/api/feed')->to('TheQueue#feed');
+    $l->any('/api/feed')->to('Feed#feed');
 
 }
 
