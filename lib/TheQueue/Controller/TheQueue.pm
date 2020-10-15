@@ -28,7 +28,8 @@ sub submissions_list {
                         $sub->{match} = 1 if $found;
                     }
                     if ($self->req->url->path =~ m|^/api/|) {
-                        $self->render(json => {
+                        return if not $self->openapi->valid_input;
+                        $self->render(openapi => {
                                 submissions => [map {
                                         my $sub = $_;
                                         {
@@ -116,7 +117,8 @@ sub wtw {
                             my ($users, $err, $user) = @_;
                             return $self->reply->exception($err) if $err;
                             if ($self->req->url->path =~ m|^/api/|) {
-                                $self->render(json => {
+                                return if not $self->openapi->valid_input;
+                                $self->render(openapi => {
                                         attendees   => $attendees,
                                         submissions => [map {
                                                 my $sub = $_;

@@ -1,4 +1,5 @@
 requires 'Mojolicious';
+requires 'Mojolicious::Plugin::OpenAPI';
 requires 'IO::Socket::SSL'; # requires zlib (zlib1g-dev on Ubuntu/Debian, zlib on Arch)
 requires 'Mandel';
 requires 'Types::Standard';

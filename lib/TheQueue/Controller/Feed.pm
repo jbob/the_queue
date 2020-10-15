@@ -25,7 +25,8 @@ sub feed {
             # Mandel nor Mango seem to support that
             @{$feed} = sort { $a->ts cmp $b->ts } @{$feed};
             if ($self->req->url->path =~ m|^/api/|) {
-                $self->render(json => {
+                return if not $self->openapi->valid_input;
+                $self->render(openapi => {
                         feed => [
                             reverse map {
                                 my $item = $_;

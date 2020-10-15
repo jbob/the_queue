@@ -50,10 +50,7 @@ sub startup {
     $l->any('/impersonate')->to('User#impersonate');
 
     # API
-    $l->get('/api/submissions')->to('TheQueue#submissions_list');
-    $l->any('/api/wtw')->to('TheQueue#wtw');
-    $l->any('/api/feed')->to('Feed#feed');
-
+    $self->plugin(OpenAPI => { spec => 'api.json', route => $l });
 }
 
 1;

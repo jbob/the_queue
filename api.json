@@ -1,0 +1,58 @@
+{
+    "swagger": "2.0",
+    "info": { "version": "0.1", "title": "Queue API" },
+    "schemes": [ "http", "https" ],
+    "basePath": "/api",
+    "consumes": ["application/x-www-form-urlencoded"],
+    "produces": ["application/json"],
+    "paths": {
+        "/submissions": {
+            "get": {
+                "x-mojo-to": "TheQueue#submissions_list",
+                "responses": {
+                    "200": {
+                        "description": "Submission list",
+                        "schema": { "type": "object" }
+                    }
+                }
+            }
+        },
+        "/feed": {
+            "get": {
+                "x-mojo-to": "Feed#feed",
+                "responses": {
+                    "200": {
+                        "description": "Feed",
+                        "schema": { "type": "object" }
+                    }
+                }
+            }
+        },
+        "/wtw": {
+            "get": {
+                "x-mojo-to": "TheQueue#wtw",
+                "parameters": [
+                    {"in": "query", "name": "username", "type": "array", "collectionFormat": "multi", "items": {"type": "string"}}
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Wtw",
+                        "schema": { "type": "object" }
+                    }
+                }
+            },
+            "post": {
+                "x-mojo-to": "TheQueue#wtw",
+                "parameters": [
+                    {"in": "formData", "name": "username", "type": "array", "collectionFormat": "multi", "items": {"type": "string"}}
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Wtw",
+                        "schema": { "type": "object" }
+                    }
+                }
+            }
+        }
+    }
+}
