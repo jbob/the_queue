@@ -175,6 +175,8 @@ sub upsert {
     my $link     = $self->req->param('link') // '';
     my $comment  = $self->req->param('comment') // '';
 
+    return $self->reply->exception("The link must start with http:// or https://") if not $link =~ m|^https?://|;
+
     if ($id) {
 
         # Update existing record
