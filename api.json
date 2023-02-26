@@ -17,12 +17,87 @@
         }
       }
     },
-    "/feed": {
+    "/submissions/available": {
       "get": {
-        "x-mojo-to": "Feed#feed",
+        "x-mojo-to": "TheQueue#available",
+        "parameters": [
+          {"in": "query", "name": "id", "type": "string"}
+        ],
         "responses": {
           "200": {
-            "description": "Feed",
+            "description": "Toggle avability",
+            "schema": { "type": "object" }
+          }
+        }
+      }
+    },
+    "/submissions/done": {
+      "get": {
+        "x-mojo-to": "TheQueue#done",
+        "parameters": [
+          {"in": "query", "name": "id", "type": "string"}
+        ],
+        "responses": {
+          "200": {
+            "description": "Toggle done",
+            "schema": { "type": "object" }
+          }
+        }
+      }
+    },
+    "/submissions/thumbs": {
+      "get": {
+        "x-mojo-to": "TheQueue#thumbs",
+        "parameters": [
+          {"in": "query", "name": "id", "type": "string"}
+        ],
+        "responses": {
+          "200": {
+            "description": "Toggle thumbs",
+            "schema": { "type": "object" }
+          }
+        }
+      }
+    },
+    "/submissions/delete": {
+      "get": {
+        "x-mojo-to": "TheQueue#delete",
+        "parameters": [
+          {"in": "query", "name": "id", "type": "string"}
+        ],
+        "responses": {
+          "200": {
+            "description": "Delete submission",
+            "schema": { "type": "object" }
+          }
+        }
+      }
+    },
+    "/submissions/upsert": {
+      "post": {
+        "x-mojo-to": "TheQueue#upsert",
+        "parameters": [
+          {"in": "formData", "name": "id", "type": "string"},
+          {"in": "formData", "name": "link", "type": "string"},
+          {"in": "formData", "name": "comment", "type": "string"}
+        ],
+        "responses": {
+          "200": {
+            "description": "Upsert submission",
+            "schema": { "type": "object" }
+          }
+        }
+      }
+    },
+    "/search": {
+      "get": {
+        "x-mojo-to": "TheQueue#search",
+        "parameters": [
+          {"in": "query", "name": "search", "type": "string"}
+        ],
+        "responses": {
+          "200": {
+            "description": "Search",
             "schema": { "type": "object" }
           }
         }
@@ -49,6 +124,31 @@
         "responses": {
           "200": {
             "description": "Wtw",
+            "schema": { "type": "object" }
+          }
+        }
+      }
+    },
+    "/feed": {
+      "get": {
+        "x-mojo-to": "Feed#feed",
+        "responses": {
+          "200": {
+            "description": "Feed",
+            "schema": { "type": "object" }
+          }
+        }
+      }
+    },
+    "/users": {
+      "get": {
+        "x-mojo-to": "User#users_list",
+        "parameters": [
+          {"in": "query", "name": "id", "type": "string"}
+        ],
+        "responses": {
+          "200": {
+            "description": "User list",
             "schema": { "type": "object" }
           }
         }

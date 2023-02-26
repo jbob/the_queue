@@ -160,7 +160,12 @@ sub upsert {
       $submission->link($link);
       $submission->comment($comment);
       $submission->save;
-      $self->redirect_to('wtw');
+      if ($self->req->url->path =~ m|^/api/|) {
+        return if not $self->openapi->valid_input;
+        $self->render(openapi => {message => "success"});
+      } else {
+        $self->redirect_to('wtw');
+      }
     });
   } else {
 
@@ -201,7 +206,13 @@ sub upsert {
           $user->add_feeds($feed);
           $user->save;
           $newsubmission->save;
-          $self->redirect_to('wtw');
+
+          if ($self->req->url->path =~ m|^/api/|) {
+            return if not $self->openapi->valid_input;
+            self->render(openapi => {message => "success"});
+          } else {
+            $self->redirect_to('wtw');
+          }
         });
       }
     );
@@ -235,12 +246,10 @@ sub done {
     return $self->reply->not_found       if not $submission;
     if ($submission->done == 1) {
       $submission->done(0);
-      my $feed = $self->feeds->create(
-        {
-          msg => sprintf("%s marked as not watched", ($submission->ogp->title || $submission->link)),
-          ts  => DateTime->now
-        }
-      );
+      my $feed = $self->feeds->create({
+        msg => sprintf("%s marked as not watched", ($submission->ogp->title || $submission->link)),
+        ts  => DateTime->now
+      });
       $submission->add_feeds($feed);
     } else {
       $submission->done(1);
@@ -249,12 +258,17 @@ sub done {
       $submission->add_feeds($feed);
     }
     $submission->save;
-    $self->respond_to(
-      json => {json => {message => 'success'}},
-      html => sub {
-        $self->redirect_to($self->req->headers->referrer);
-      }
-    );
+    if ($self->req->url->path =~ m|^/api/|) {
+      return if not $self->openapi->valid_input;
+      $self->render(openapi => {message => "success", submission => $submission});
+    } else {
+      $self->respond_to(
+        json => {json => {message => 'success'}},
+        html => sub {
+          $self->redirect_to($self->req->headers->referrer);
+        }
+      );
+    }
   });
   $self->render_later;
 }
@@ -269,30 +283,31 @@ sub available {
     return $self->reply->not_found       if not $submission;
     if ($submission->available == 1) {
       $submission->available(0);
-      my $feed = $self->feeds->create(
-        {
-          msg => sprintf("%s marked as not available", ($submission->ogp->title || $submission->link)),
-          ts  => DateTime->now
-        }
-      );
+      my $feed = $self->feeds->create({
+        msg => sprintf("%s marked as not available", ($submission->ogp->title || $submission->link)),
+        ts  => DateTime->now
+      });
       $submission->add_feeds($feed);
     } else {
       $submission->available(1);
-      my $feed = $self->feeds->create(
-        {
-          msg => sprintf("%s marked as available", ($submission->ogp->title || $submission->link)),
-          ts  => DateTime->now
-        }
-      );
+      my $feed = $self->feeds->create({
+        msg => sprintf("%s marked as available", ($submission->ogp->title || $submission->link)),
+        ts  => DateTime->now
+      });
       $submission->add_feeds($feed);
     }
     $submission->save;
-    $self->respond_to(
-      json => {json => {message => 'success'}},
-      html => sub {
-        $self->redirect_to($self->req->headers->referrer);
-      }
-    );
+    if ($self->req->url->path =~ m|^/api/|) {
+      return if not $self->openapi->valid_input;
+      $self->render(openapi => {message => "success", submission => $submission});
+    } else {
+      $self->respond_to(
+        json => {json => {message => 'success'}},
+        html => sub {
+          $self->redirect_to($self->req->headers->referrer);
+        }
+      );
+    }
   });
   $self->render_later;
 }
@@ -330,12 +345,17 @@ sub thumbs {
         $user->add_feeds($feed);
       }
       $submission->save;
-      $self->respond_to(
-        json => {json => {message => 'success', interested => [map { $_->username } @{$submission->interested}]}},
-        html => sub {
-          $self->redirect_to($self->req->headers->referrer);
-        }
-      );
+      if ($self->req->url->path =~ m|^/api/|) {
+        return if not $self->openapi->valid_input;
+        $self->render(openapi => {message => "success", submission => $submission});
+      } else {
+        $self->respond_to(
+          json => {json => {message => 'success', interested => [map { $_->username } @{$submission->interested}]}},
+          html => sub {
+            $self->redirect_to($self->req->headers->referrer);
+          }
+        );
+      }
     });
   });
   $self->render_later;
@@ -355,12 +375,17 @@ sub delete {
     $feed->save;
     $submission->ogp->remove(sub { }) if $submission->ogp;
     $submissions->remove(sub { });
-    $self->respond_to(
-      json => {json => {message => 'success'}},
-      html => sub {
-        $self->redirect_to($self->req->headers->referrer);
-      }
-    );
+    if ($self->req->url->path =~ m|^/api/|) {
+      return if not $self->openapi->valid_input;
+      $self->render(openapi => {message => "success"});
+    } else {
+      $self->respond_to(
+        json => {json => {message => 'success'}},
+        html => sub {
+          $self->redirect_to($self->req->headers->referrer);
+        }
+      );
+    }
   });
   $self->render_later;
 }
@@ -387,7 +412,34 @@ sub search {
           my $found = grep { $_->id eq $user->id } @{$sub->interested};
           $sub->{match} = 1 if $found;
         }
-        $self->render('the_queue/submissions_list', submissions => \@result);
+        if ($self->req->url->path =~ m|^/api/|) {
+          return if not $self->openapi->valid_input;
+          $self->render(
+            openapi => {
+              result => [
+                map {
+                  my $sub = $_;
+                  {
+                    id          => $sub->id,
+                    title       => $sub->ogp->title,
+                    image       => $sub->ogp->image,
+                    description => $sub->ogp->description,
+                    comment     => $sub->comment,
+                    link        => $sub->link,
+                    available   => $sub->available,
+                    done        => $sub->done,
+                    match       => $sub->{match},
+                    ts          => $sub->ts // DateTime->new(year => 1970),
+                    submitter   => {username => $sub->user->username, id => $sub->user->id},
+                    interested  => [map { {username => $_->username, id => $_->id} } @{$sub->interested}]
+                  };
+                } @result
+              ],
+            }
+          );
+        } else {
+          $self->render('the_queue/submissions_list', submissions => \@result);
+        }
       });
     });
   });

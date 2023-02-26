@@ -185,14 +185,37 @@ sub users_list {
       my ($users, $err, $user) = @_;
       return $self->reply->exception($err) if $err;
       return $self->reply->not_found       if not $user;
-      $self->render('user/user', user => $user);
+      if ($self->req->url->path =~ m|^/api/|) {
+        return if not $self->openapi->valid_input;
+        $self->render(
+          openapi => {
+            users => [
+              {id => $user->id, username => $user->username, submissions => $user->submissions, feed => $user->feeds}
+            ]
+          }
+        );
+      } else {
+        $self->render('user/user', user => $user);
+      }
     });
   } else {
     $self->users->all(sub {
       my ($users, $err, $user) = @_;
       return $self->reply->exception($err) if $err;
       return $self->reply->not_found       if not $user;
-      $self->render(users => $user);
+      if ($self->req->url->path =~ m|^/api/|) {
+        return if not $self->openapi->valid_input;
+        $self->render(
+          openapi => {
+            users => [
+              map { {id => $_->id, username => $_->username, submissions => $_->submissions, feed => $_->feeds}; }
+                  @$user
+            ]
+          }
+        );
+      } else {
+        $self->render(users => $user);
+      }
     });
   }
   $self->render_later;
