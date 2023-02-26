@@ -16,9 +16,14 @@ Simply clone or download the repository and run:
 cpanm --notest --installdeps .
 ```
 
+### MongoDB
+
+MongoDB version 6 (and higher is not yet supported by [Mango](https://metacpan.org/pod/Mango). Only use up to version
+5.x. See also [https://www.mongodb.com/docs/v6.0/release-notes/6.0-compatibility/#legacy-opcodes-removed](https://www.mongodb.com/docs/v6.0/release-notes/6.0-compatibility/#legacy-opcodes-removed).
+
 ## Configuration
 
-Found in [the_queue.conf](the_queue.conf). 
+Found in [the_queue.conf](the_queue.conf).
 
 ## Running production
 
@@ -48,7 +53,7 @@ morbo script/the_queue
 Hint: if you don't have a mongo server, you can simply spin one up in Docker with:
 
 ```bash
-docker run --rm -d --name queue-mongo -p 27017:27017 mongo
+docker run --rm -d --name queue-mongo -p 27017:27017 mongo:5.0.15
 ```
 
 (just remember to `docker stop queue-mongo` the database again when you don't need it anymore)
