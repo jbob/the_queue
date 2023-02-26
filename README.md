@@ -8,6 +8,12 @@ Web-based queue thingy written in Perl. Depends on:
 
 See it in action at [https://q.markusko.ch](https://q.markusko.ch).
 
+## Run via docker-compose
+
+```bash
+docker-compose up -d
+```
+
 ## Installing dependencies
 
 Simply clone or download the repository and run:
