@@ -42,6 +42,7 @@ sub submissions_list {
                                             available => $sub->available,
                                             done      => $sub->done,
                                             match     => $sub->{match},
+                                            ts        => $sub->ts // DateTime->new(year => 1970),
                                             submitter => {
                                                 username => $sub->user->username,
                                                 id => $sub->user->id
@@ -132,6 +133,7 @@ sub wtw {
                                                     available => $sub->available,
                                                     done      => $sub->done,
                                                     match     => $sub->{match},
+                                                    ts        => $sub->ts // DateTime->new(year => 1970),
                                                     submitter => {
                                                         username => $sub->user->username,
                                                         id => $sub->user->id
@@ -201,12 +203,14 @@ sub upsert {
     else {
 
         # Create new record
+        my $ts = DateTime->now();
         my $newsubmission = $self->submissions->create(
             {
                 link      => $link,
                 done      => 0,
                 available => 0,
-                comment   => $comment
+                comment   => $comment,
+                ts        => $ts
             }
         );
 
