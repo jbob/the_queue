@@ -43,6 +43,7 @@ sub startup {
   $l->any('/wtw')->to('TheQueue#wtw');
   $l->any('/account/changepw')->to('User#changepw');
   $l->any('/account/delete')->to('User#deleteacc');
+  $l->any('/account/theme/:themename')->to('User#theme');
   $l->any('/search')->to('TheQueue#search');
   $l->any('/feed')->to('Feed#feed');
   $l->any('/impersonate')->to('User#impersonate');

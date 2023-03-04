@@ -7,3 +7,29 @@
 <div class="field">
 %= tag h6 => link_to 'Delete account' => 'account/delete', class => 'button is-link'
 </div>
+<div class="field">
+<span>Theme:</span>
+<div class="content">
+  <ul>
+    <li>
+      %= link_to Default => 'account/theme/default', class => 'is-link'
+    </li>
+    <li>
+      %= link_to Cosmo => 'account/theme/cosmo', class => 'is-link'
+    </li>
+    <li>
+      %= link_to Litera => 'account/theme/litera', class => 'is-link'
+    </li>
+    <li>
+      %= link_to Solar => 'account/theme/solar', class => 'is-link'
+    </li>
+    <li>
+      %= link_to Slate => 'account/theme/slate', class => 'is-link'
+    </li>
+    <li>
+      %= link_to Superhero => 'account/theme/superhero', class => 'is-link'
+    </li>
+  </ul>
+  <span>Preview them at: <a href="https://jenil.github.io/bulmaswatch/">https://jenil.github.io/bulmaswatch/</a>
+</div>
+</div>

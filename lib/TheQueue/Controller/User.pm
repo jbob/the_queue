@@ -13,6 +13,7 @@ sub login {
   if ($username and $password) {
     $self->session(username => $username);
     $self->session(password => $password);
+    $self->session(themename => $self->session('themename') // 'default');
     return $self->redirect_to($self->session('target') // '/');
   }
   if ($self->req->method eq 'POST') {
@@ -134,6 +135,13 @@ sub deleteacc {
   }
 
   $self->render_later;
+}
+
+sub theme {
+  my $self = shift;
+  my $themename = $self->stash('themename') || 'default';
+  $self->session('themename', $themename);
+  return $self->redirect_to('account');
 }
 
 sub impersonate {
